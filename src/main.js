@@ -7,6 +7,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 const texturePaths = [];
 
 const modelPaths = [
+  'models/body/head.glb',
   'models/body/base.glb',
   'models/body/eyebrows_flip_norm.glb',
   'models/body/left-eye.glb',
@@ -159,14 +160,12 @@ async function init() {
   const ambient = new THREE.AmbientLight(0x404040, 50);
   scene.add(ambient);
 
-  const body = models.get("Body");
-  body.material.color.set(skinCodes[1]);
-  if (body) scene.add(body);
-
-  const wavy = models.get("Wavy");
-  wavy.material.color.set(skinCodes[4]);
-  wavy.material.side = THREE.DoubleSide;
-  if (wavy) scene.add(wavy);
+  // Add base body meshes
+  scene.add(models.get("Body"));
+  scene.add(models.get("Left Iris"));
+  scene.add(models.get("Left Pupil"));
+  scene.add(models.get("Right Iris"));
+  scene.add(models.get("Right Pupil"));
 
   const renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
   renderer.setSize( sizes.width, sizes.height );
