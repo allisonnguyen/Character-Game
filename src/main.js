@@ -8,6 +8,9 @@ const texturePaths = [];
 
 const modelPaths = [
   'models/body/base.glb',
+  'models/body/eyebrows_flip_norm.glb',
+  'models/body/left-eye.glb',
+  'models/body/right-eye.glb',
   'models/clothing/askirt.glb',
   'models/clothing/lskirt.glb',
   'models/clothing/pants.glb',
@@ -59,6 +62,13 @@ function loadTexture(path) {
 
 function loadModel(path) {
   return new Promise((resolve, reject) => {
+    const nameMap = {
+      "Sphere016": "Left Pupil",
+      "Sphere016_1": "Left Iris",
+      "Sphere015": "Right Pupil",
+      "Sphere015_1": "Right Iris",
+    };
+
     loader.load(
       path,
       (gltf) => {
@@ -67,6 +77,10 @@ function loadModel(path) {
             child.material = new THREE.MeshStandardMaterial({ color: 0xf0f0f0 });
             child.castShadow = true;
             child.receiveShadow = true;
+            
+            if (nameMap[child.name]) {
+              child.name = nameMap[child.name];
+            }
             models.set(child.name, child);
           }
         });
