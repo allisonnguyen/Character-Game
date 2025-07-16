@@ -9,7 +9,7 @@ const texturePaths = [];
 const modelPaths = [
   'models/body/head.glb',
   'models/body/base.glb',
-  'models/body/eyebrows_flip_norm.glb',
+  'models/body/eyebrows.glb',
   'models/body/left-eye.glb',
   'models/body/right-eye.glb',
   'models/clothing/askirt.glb',
@@ -130,8 +130,8 @@ async function init() {
     console.error("Error loading assets: ", err);
   }
 
-  console.log(textures);
-  console.log(models);
+  // console.log(textures);
+  // console.log(models);
 
   // Environment
   const canvas = document.querySelector("#experience-canvas");
@@ -166,7 +166,9 @@ async function init() {
   scene.add(models.get("Left Pupil"));
   scene.add(models.get("Right Iris"));
   scene.add(models.get("Right Pupil"));
+  scene.add(models.get("Eyebrows"));
 
+  // Renderer
   const renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
   renderer.setSize( sizes.width, sizes.height );
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
