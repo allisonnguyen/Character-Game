@@ -30,6 +30,33 @@ const skinCodes = [
   '#2c1c11',              // deep
 ];
 
+const eyeCodes = [
+  '#686867',
+  '#9a7356',
+  '#59b3ae',
+  '#91a57b',
+  '#577fd8',
+  '#9a95a9',
+];
+
+const hairCodes = [
+  '#edeb2f',
+  '#583c36',
+  '#814043',
+  '#bf502f',
+  '#f1ce34',
+  '#92908f',
+  '#cfc9b7',
+  '#3087d0',
+  '#9dbcca',
+  '#34984f',
+  '#57cbb5',
+  '#f54e4c',
+  '#ff874c',
+  '#dd98cf',
+  '#f7aebd',
+];
+
 // Loaders
 const textureLoader = new THREE.TextureLoader();
 
