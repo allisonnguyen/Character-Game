@@ -1,24 +1,168 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+import './style.scss'
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+const texturePaths = [];
 
-setupCounter(document.querySelector('#counter'))
+const modelPaths = [
+  'models/body/base.glb',
+  'models/clothing/askirt.glb',
+  'models/clothing/lskirt.glb',
+  'models/clothing/pants.glb',
+  'models/clothing/shorts.glb',
+  'models/clothing/tshirt.glb',
+  'models/clothing/yshirt.glb',
+  'models/hair/spikey.glb',
+  'models/hair/wavy.glb',
+];
+
+const skinCodes = [ 
+  '#f0f0f0',              // base
+  '#f8d6bf',              // light
+  '#e7b292',              // medium
+  '#a45f41',              // tan
+  '#6e442a',              // dark
+  '#2c1c11',              // deep
+];
+
+// Loaders
+const textureLoader = new THREE.TextureLoader();
+
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath("/draco/");
+
+const loader = new GLTFLoader();
+loader.setDRACOLoader(dracoLoader);
+
+// Maps
+const textures = new Map();
+const models = new Map();
+
+function loadTexture(path) {
+  return new Promise((resolve, reject) => {
+    textureLoader.load(
+      path,
+      (texture) => {
+        const name = path.split('/').pop();
+        texture.flipY = false;
+        texture.colorSpace = THREE.SRGBColorSpace;
+        textures.set(name, texture);
+        resolve(texture);
+      },
+      undefined,
+      (error) => reject(error)
+    );
+  });
+}
+
+function loadModel(path) {
+  return new Promise((resolve, reject) => {
+    loader.load(
+      path,
+      (gltf) => {
+        gltf.scene.traverse((child) => {
+          if (child.isMesh) {
+            child.material = new THREE.MeshStandardMaterial({ color: 0xf0f0f0 });
+            child.castShadow = true;
+            child.receiveShadow = true;
+            models.set(child.name, child);
+          }
+        });
+        resolve(gltf);
+      },
+      undefined,
+      (error) => reject(error)
+    );
+  });
+}
+
+async function init() {
+  // Load assets
+  const texturePromises = texturePaths.map(loadTexture);
+  const modelPromises = modelPaths.map(loadModel);
+  try {
+    await Promise.all([...texturePromises, ...modelPromises]);
+  } catch(err) {
+    console.error("Error loading assets: ", err);
+  }
+
+  console.log(textures);
+  console.log(models);
+
+  // Environment
+  const canvas = document.querySelector("#experience-canvas");
+  const sizes =  {
+    height: window.innerHeight,
+    width: window.innerWidth
+  }
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xf0f0f0);
+
+  const camera = new THREE.PerspectiveCamera( 45, sizes.width / sizes.height, 0.1, 1000 );
+  camera.position.set(0, 1, 5);
+
+  const sun = new THREE.DirectionalLight(0xffffff);
+  sun.castShadow = true;
+  sun.position.set(50, 50, 50);
+  sun.shadow.normalBias = 0.1;
+  scene.add(sun);
+ 
+  const shadowHelper = new THREE.CameraHelper(sun.shadow.camera);
+  scene.add(shadowHelper);
+  const helper = new THREE.DirectionalLightHelper(sun, 5);
+  scene.add(helper);
+
+  const ambient = new THREE.AmbientLight(0x404040, 50);
+  scene.add(ambient);
+
+  const body = models.get("Body");
+  body.material.color.set(skinCodes[1]);
+  if (body) scene.add(body);
+
+  const wavy = models.get("Wavy");
+  wavy.material.color.set(skinCodes[4]);
+  wavy.material.side = THREE.DoubleSide;
+  if (wavy) scene.add(wavy);
+
+  const renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
+  renderer.setSize( sizes.width, sizes.height );
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+
+  // Orbit Controls
+  const controls = new OrbitControls( camera, renderer.domElement );
+  controls.target.set(0, 0.75, 0);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.minDistance = 3;
+  controls.maxDistance = 10;
+  controls.update();
+
+  // Event Listeners
+  window.addEventListener("resize", () => {
+    sizes.width = window.innerWidth;
+    sizes.height = window.innerHeight;
+
+    // Update Camera
+    camera.aspect = sizes.width / sizes.height;
+    camera.updateProjectionMatrix();
+
+    // Update Renderer
+    renderer.setSize( sizes.width, sizes.height );
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  });
+
+  const render = () => {
+    controls.update();
+
+    renderer.render( scene, camera );
+    window.requestAnimationFrame(render);
+  }
+
+  render();
+}
+
+init();
