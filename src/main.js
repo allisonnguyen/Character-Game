@@ -58,7 +58,9 @@ const hairCodes = [
   '#f7aebd',
 ];
 
-// Loaders
+const BASE_COLOR = 0xf0f0f0f0;
+
+/**  -------------------------- Loader Preparations -------------------------- */
 const textureLoader = new THREE.TextureLoader();
 
 const dracoLoader = new DRACOLoader();
@@ -67,10 +69,10 @@ dracoLoader.setDecoderPath("/draco/");
 const loader = new GLTFLoader();
 loader.setDRACOLoader(dracoLoader);
 
-// Maps
 const textures = new Map();
 const models = new Map();
 
+/**  ------------------------------- Textures ------------------------------- */
 function loadTexture(path) {
   return new Promise((resolve, reject) => {
     textureLoader.load(
@@ -88,6 +90,7 @@ function loadTexture(path) {
   });
 }
 
+/**  -------------------------------- Models -------------------------------- */
 function loadModel(path) {
   return new Promise((resolve, reject) => {
     const nameMap = {
@@ -102,7 +105,7 @@ function loadModel(path) {
       (gltf) => {
         gltf.scene.traverse((child) => {
           if (child.isMesh) {
-            child.material = new THREE.MeshStandardMaterial({ color: 0xf0f0f0 });
+            child.material = new THREE.MeshStandardMaterial({ color: BASE_COLOR });
             child.castShadow = true;
             child.receiveShadow = true;
             
@@ -120,6 +123,7 @@ function loadModel(path) {
   });
 }
 
+/**  ----------------------------- Setup Render ----------------------------- */
 async function init() {
   // Load assets
   const texturePromises = texturePaths.map(loadTexture);
@@ -130,37 +134,52 @@ async function init() {
     console.error("Error loading assets: ", err);
   }
 
-  // console.log(textures);
-  // console.log(models);
-
   // Environment
-  const canvas = document.querySelector("#experience-canvas");
+  const experienceContainer = document.querySelector("#experience-container");
+  const canvas = document.querySelector("#experience-canvas")
+  
   const sizes =  {
-    height: window.innerHeight,
-    width: window.innerWidth
+    width: experienceContainer.clientWidth,
+    height: experienceContainer.clientHeight
   }
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xf0f0f0);
+  scene.background = new THREE.Color(BASE_COLOR);
 
-  const camera = new THREE.PerspectiveCamera( 45, sizes.width / sizes.height, 0.1, 1000 );
+  const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 1000);
   camera.position.set(0, 1, 5);
 
+  // Directional
   const sun = new THREE.DirectionalLight(0xffffff);
   sun.castShadow = true;
+  sun.shadow.mapSize = new THREE.Vector2(1024, 1024);
   sun.position.set(50, 50, 50);
   sun.shadow.normalBias = 0.1;
   scene.add(sun);
+
+  // Ambient
+  const ambient = new THREE.AmbientLight(0x404040, 50);
+  scene.add(ambient);
  
+  // Helpers
   const shadowHelper = new THREE.CameraHelper(sun.shadow.camera);
   scene.add(shadowHelper);
   const helper = new THREE.DirectionalLightHelper(sun, 5);
   scene.add(helper);
 
-  const ambient = new THREE.AmbientLight(0x404040, 50);
-  scene.add(ambient);
+  // Floor
+  var floorGeometry = new THREE.PlaneGeometry(5000, 5000, 1, 1);
+  var floorMaterial = new THREE.MeshPhongMaterial({
+      color: BASE_COLOR,
+      shininess: 0,
+  });
+  var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+  floor.rotation.x = -0.5 * Math.PI;
+  floor.receiveShadow = true;
+  floor.position.y = 0;
+  // scene.add(floor);
 
-  // Add base body meshes
+  // Body Meshes
   scene.add(models.get("Body"));
   scene.add(models.get("Left Iris"));
   scene.add(models.get("Left Pupil"));
@@ -169,38 +188,42 @@ async function init() {
   scene.add(models.get("Eyebrows"));
 
   // Renderer
-  const renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
-  renderer.setSize( sizes.width, sizes.height );
+  const renderer = new THREE.WebGLRenderer({
+    canvas: canvas,
+    antialias: true,
+    alpha: true
+  });
+  renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.shadowMap.enabled = true;
 
   // Orbit Controls
-  const controls = new OrbitControls( camera, renderer.domElement );
+  const controls = new OrbitControls(camera, renderer.domElement);
   controls.target.set(0, 0.75, 0);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
   controls.minDistance = 3;
   controls.maxDistance = 10;
+  controls.enablePan = false;
   controls.update();
 
   // Event Listeners
   window.addEventListener("resize", () => {
-    sizes.width = window.innerWidth;
-    sizes.height = window.innerHeight;
+    sizes.width = experienceContainer.clientWidth;
+    sizes.height = experienceContainer.clientHeight;
 
     // Update Camera
     camera.aspect = sizes.width / sizes.height;
     camera.updateProjectionMatrix();
 
     // Update Renderer
-    renderer.setSize( sizes.width, sizes.height );
+    renderer.setSize(sizes.width, sizes.height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   });
 
-  const render = () => {
+  function render() {
     controls.update();
-
-    renderer.render( scene, camera );
+    renderer.render(scene, camera);
     window.requestAnimationFrame(render);
   }
 
