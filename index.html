@@ -5,14 +5,41 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>3D Character Customizer App</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
   </head>
   <body>
     <div class="container">
       <div id="experience-container">
         <canvas id="experience-canvas" class="experience-canvas"></canvas>
+        <button id="reset-view"></button>
       </div>
 
-      <div id="customization-panel"></div>
+      <div id="customization-panel">
+        <div class="category-buttons">
+          <button class="category-btn active" data-options="skin">
+            <i class="fa-solid fa-face-smile"></i>
+          </button>
+          <button class="category-btn" data-options="eyes">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+          <button class="category-btn" data-options="hair">
+            <i class="fa-solid fa-scissors"></i>
+          </button>
+          <button class="category-btn" data-options="nose"></button>
+          <button class="category-btn" data-options="makeup">
+            <i class="fa-solid fa-paintbrush"></i>
+          </button>
+        </div>
+        <div class="options-panel">
+          <p>options</p>
+        </div>
+      </div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>

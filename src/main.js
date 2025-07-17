@@ -207,6 +207,13 @@ async function init() {
   controls.enablePan = false;
   controls.update();
 
+  const resetButton = document.getElementById('reset-view');
+  resetButton.addEventListener('click', () => {
+    camera.position.set(0, 1, 5);
+    controls.target.set(0, 0.75, 0);
+    controls.update();
+  });
+
   // Event Listeners
   window.addEventListener("resize", () => {
     sizes.width = experienceContainer.clientWidth;
