@@ -1,120 +1,174 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-:root{
+:root {
+    /* Typography */
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-html, body, .container {
+html, 
+body, 
+.container {
+    /* Box Model */
     width: 100%;
     height: 100%;
     overflow: hidden;
 }
 
 .container {
+    /* Display & Flexbox */
     display: flex;
+    /* Positioning */
     position: relative;
 }
 
 #experience-container {
-    flex: 0 0 40%;
-    height: 100%;
+    /* Positioning */
     position: relative;
-}
-
-#reset-view {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background-color: #ffffff;
-    width: 70px;
-    height: 70px;
-    border: none;
-    border-radius: 50%;
+    /* Box Model */
+    height: 100%;
+    /* Flexbox */
+    flex: 0 0 40%;
 }
 
 #experience-canvas {
+    /* Positioning */
     position: absolute;
     top: 0;
     left: 0;
+    /* Box Model */
     width: 100%;
     height: 100%;
+    /* Display */
     display: block;
 }
 
+#reset-view {
+    /* Positioning */
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1;
+    /* Display & Flexbox */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Box Model */
+    width: 70px;
+    height: 70px;
+    padding: 0;
+    /* Visual */
+    background-color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+#reset-view svg {
+    /* Box Model */
+    width: 60%;
+    height: 60%;
+}
+
 #customization-panel {
-    height: 100%;
-    flex: 0 0 60%;
+    /* Display & Flexbox */
     display: flex;
     flex-direction: column;
+    align-items: center;
+    flex: 0 0 60%;
+    /* Box Model */
+    height: 100%;
     padding: 20px;
+    /* Visual */
     background-color: #ffffff;
     color: #f0f0f0f0;
     overflow-y: auto;
-    align-items: center;
 }
 
 .category-buttons {
+    /* Display & Flexbox */
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    /* Box Model */
     margin: 50px 0;
 }
 
 .category-btn {
-    width: 50px;
-    height: 50px;
+    /* Positioning */
+    z-index: 1;
+    /* Display & Flexbox */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Box Model */
+    width: clamp(60px, 5vw, 80px);
+    height: clamp(60px, 5vw, 80px);
+    margin: 0 -4px;
+    padding: 0;
+    /* Visual */
     background-color: #444;
-    color: #828282;
     border: none;
     border-radius: 50%;
+    color: #828282;
     cursor: pointer;
-    margin: 0 -4px;
-    z-index: 1;
+    overflow: hidden;
 }
 
-.category-btn i {
-    font-size: 20px;
+.category-btn svg {
+    /* Box Model */
+    width: 40%;
+    height: 40%;
 }
 
 .category-btn.active {
-    background-color: #0078d7;
-    color: white;
+    /* Positioning */
     z-index: 3;
+    /* Visual */
+    color: white;
 }
 
-.category-btn.active i {
-    font-size: 28px;
+.category-btn.active svg {
+    /* Box Model */
+    width: 75%;
+    height: 75%;
 }
 
 .options-panel {
+    /* Flexbox */
     flex-grow: 1;
+    /* Visual */
     overflow-y: auto;
 }
 
 /* Mobile/Portrait devices (default to vertical split) */
 @media (max-width: 768px) and (orientation: portrait) {
     .container {
+        /* Flexbox */
         flex-direction: column;
     }
     
     #experience-container {
+        /* Flexbox */
         flex: 0 0 40vh;
+        /* Box Model */
         width: 100%;
     }
     
     #customization-panel {
+        /* Flexbox */
         flex: 1 1 auto;
+        /* Box Model */
         width: 100%;
+        /* Visual */
         overflow-y: auto;
     }
 }
@@ -122,16 +176,21 @@ html, body, .container {
 /* Tablet/Landscape devices (horizontal split) */
 @media (max-width: 1024px) and (orientation: landscape) {
     .container {
+        /* Flexbox */
         flex-direction: row;
     }
     
     #experience-container {
+        /* Flexbox */
         flex: 0 0 40%;
+        /* Box Model */
         height: 100%;
     }
     
     #customization-panel {
+        /* Flexbox */
         flex: 0 0 60%;
+        /* Box Model */
         height: 100%;
     }
 }
@@ -139,6 +198,7 @@ html, body, .container {
 /* Larger screens (horizontal split) */
 @media (min-width: 1025px) {
     .container {
+        /* Flexbox */
         flex-direction: row;
     }
 }
