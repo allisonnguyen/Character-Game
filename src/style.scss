@@ -50,25 +50,42 @@ body,
     display: block;
 }
 
-#reset-view {
+#settings, #reset-view {
     /* Positioning */
     position: absolute;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1;
     /* Display & Flexbox */
     display: flex;
     justify-content: center;
     align-items: center;
     /* Box Model */
-    width: 70px;
-    height: 70px;
-    padding: 0;
+    width: clamp(40px, 8vw, 70px);
+    height: clamp(40px, 8vw, 70px);
     /* Visual */
     background-color: #ffffff;
+    color: #828282;
     border: none;
     border-radius: 50%;
     overflow: hidden;
+}
+
+#settings {
+    top: 20px;
+    left: 20px;
+}
+
+#settings svg {
+    /* Box Model */
+    width: 75%;
+    height: 75%;
+}
+
+#reset-view {
+    /* Positioning */
+    bottom: 20px;
+    right: 20px;
+    z-index: 1;
+    /* Box Model */
+    padding: 0;
 }
 
 #reset-view svg {

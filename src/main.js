@@ -138,9 +138,7 @@ function initCategories() {
       const optionsType = button.dataset.options;
       const targetPanel = document.querySelector(`.options-content[data-options="${optionsType}"]`);
       if (targetPanel) {
-        console.log(targetPanel);
         targetPanel.classList.add('active');
-        console.log(optionPanels);
       }
     });
   });
@@ -229,6 +227,11 @@ async function init() {
   controls.maxDistance = 10;
   controls.enablePan = false;
   controls.update();
+
+  const settingsButton = document.getElementById('settings');
+  settingsButton.addEventListener('click', () => {
+    console.log("Settings");
+  });
 
   const resetButton = document.getElementById('reset-view');
   resetButton.addEventListener('click', () => {
