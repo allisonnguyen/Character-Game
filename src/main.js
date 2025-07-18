@@ -123,6 +123,29 @@ function loadModel(path) {
   });
 }
 
+/**  ---------------------------- Setup UI Panels ---------------------------- */
+function initCategories() {
+  const categoryButtons = document.querySelectorAll('.category-btn');
+  const optionPanels = document.querySelectorAll('.options-content');
+
+  categoryButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      categoryButtons.forEach(btn => btn.classList.remove('active'));
+      optionPanels.forEach(panel => panel.classList.remove('active'));
+
+      button.classList.add('active');
+
+      const optionsType = button.dataset.options;
+      const targetPanel = document.querySelector(`.options-content[data-options="${optionsType}"]`);
+      if (targetPanel) {
+        console.log(targetPanel);
+        targetPanel.classList.add('active');
+        console.log(optionPanels);
+      }
+    });
+  });
+}
+
 /**  ----------------------------- Setup Render ----------------------------- */
 async function init() {
   // Load assets
@@ -235,6 +258,7 @@ async function init() {
   }
 
   render();
+  initCategories();
 }
 
 init();
