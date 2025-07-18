@@ -198,6 +198,10 @@ body,
 .options-content.active {
     display: block;
 }
+.options-content svg {
+    width: 70px;
+    height: 70px;
+}
 
 /* Mobile/Portrait devices (default to vertical split) */
 @media (max-width: 768px) and (orientation: portrait) {
