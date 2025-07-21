@@ -22,6 +22,8 @@ const modelPaths = [
   'models/hair/wavy.glb',
 ];
 
+const SWATCH_ICON_PATH = 'M47 11h15M43 12h23M40 13h29M38 14h34M35 15h38M33 16h42M32 17h45M30 18h48M29 19h50M28 20h52M27 21h53M26 22h55M26 23h56M25 24h57M24 25h59M24 26h59M23 27h60M23 28h60M22 29h62M22 30h62M22 31h62M21 32h64M21 33h64M21 34h64M21 35h64M21 36h64M21 37h64M21 38h64M21 39h64M21 40h63M21 41h63M20 42h64M19 43h64M18 44h65M17 45h65M16 46h66M15 47h66M15 48h65M14 49h66M14 50h65M13 51h65M13 52h65M12 53h67M12 54h67M11 55h68M11 56h69M11 57h69M11 58h69M11 59h69M11 60h69M11 61h69M11 62h69M12 63h68M12 64h67M12 65h67M13 66h66M13 67h65M13 68h65M14 69h63M14 70h63M15 71h61M15 72h60M16 73h59M17 74h57M18 75h55M19 76h53M20 77h51M22 78h48M23 79h45M25 80h41M27 81h37M29 82h32M33 83h24M39 84h13';
+
 const skinCodes = [ 
   '#f0f0f0',              // base
   '#f8d6bf',              // light
@@ -144,9 +146,16 @@ function initCategories() {
   });
 }
 
-function createSwatch(className, color, isActive) {
+/**
+ * Creates a color swatch button with an SVG icon
+ * @param {string} swatchClass - CSS class for the button
+ * @param {string} color - Color value in hex format
+ * @param {boolean} isActive - Whether the swatch should be active initially
+ * @returns {HTMLButtonElement} The created swatch button
+ */
+function createSwatch(swatchClass, color, isActive) {
     const button = document.createElement('button');
-    button.className = className;
+    button.className = swatchClass;
     if (isActive) button.classList.add('active');
     button.dataset.color = color;
 
@@ -157,128 +166,76 @@ function createSwatch(className, color, isActive) {
 
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute('stroke', color);
-    path.setAttribute('d', 'M47 11h15M43 12h23M40 13h29M38 14h34M35 15h38M33 16h42M32 17h45M30 18h48M29 19h50M28 20h52M27 21h53M26 22h55M26 23h56M25 24h57M24 25h59M24 26h59M23 27h60M23 28h60M22 29h62M22 30h62M22 31h62M21 32h64M21 33h64M21 34h64M21 35h64M21 36h64M21 37h64M21 38h64M21 39h64M21 40h63M21 41h63M20 42h64M19 43h64M18 44h65M17 45h65M16 46h66M15 47h66M15 48h65M14 49h66M14 50h65M13 51h65M13 52h65M12 53h67M12 54h67M11 55h68M11 56h69M11 57h69M11 58h69M11 59h69M11 60h69M11 61h69M11 62h69M12 63h68M12 64h67M12 65h67M13 66h66M13 67h65M13 68h65M14 69h63M14 70h63M15 71h61M15 72h60M16 73h59M17 74h57M18 75h55M19 76h53M20 77h51M22 78h48M23 79h45M25 80h41M27 81h37M29 82h32M33 83h24M39 84h13');
+    path.setAttribute('d', SWATCH_ICON_PATH);
     
     svg.appendChild(path);
     button.appendChild(svg);
     return button;
 }
 
-function createSkinGrid() {
-    const skinOptionsContainer = document.querySelector('.skin-options');
-    skinOptionsContainer.innerHTML = '';
+/**
+ * Creates a grid of color swatches in the specified container
+ * @param {string} containerSelector - Selector for the container element
+ * @param {string[]} colors - Array of color values
+ * @param {THREE.Object3D[]} targetParts - Array of THREE.js objects to apply color to
+ */
+function createSwatchGrid(containerSelector, colorCodes, targetParts) {
+  const optionsContainer = document.querySelector(containerSelector);
+  optionsContainer.innerHTML = '';
 
-    // Create first row
-    const row1 = document.createElement('div');
-    row1.className = 'skin-options-row';
-    
-    // Create second row
-    const row2 = document.createElement('div');
-    row2.className = 'skin-options-row';
+  // Create rows
+  const row1 = document.createElement('div');
+  row1.className = 'options-row';
 
-    // Split skin codes into two groups
-    const half = Math.ceil(skinCodes.length / 2);
-    const firstRowColors = skinCodes.slice(0, half);
-    const secondRowColors = skinCodes.slice(half);
+  const row2 = document.createElement('div');
+  row2.className = 'options-row';
 
-    // Add buttons to first row
-    firstRowColors.forEach((color, index) => {
-        const button = createSwatch('skin-option', color, index === 0);
-        row1.appendChild(button);
+  // Split color codes into two groups
+  const half = Math.ceil(colorCodes.length / 2);
+  const [firstRowColors, secondRowColors] = [colorCodes.slice(0, half), colorCodes.slice(half)];
+
+  const optionClass = optionsContainer.className.slice(0, -1);
+
+  // Create buttons for each row
+  [firstRowColors, secondRowColors].forEach((rowColors, index) => {
+    const row = index === 0 ? row1 : row2;
+    rowColors.forEach(color => {
+      row.appendChild(createSwatch(optionClass, color, false));
     });
+  });
 
-    // Add buttons to second row
-    secondRowColors.forEach((color, index) => {
-        const button = createSwatch('skin-option', color, false);
-        row2.appendChild(button);
-    });
+  optionsContainer.append(row1, row2);
 
-    skinOptionsContainer.appendChild(row1);
-    skinOptionsContainer.appendChild(row2);
-
-    initSkinOptions();
+  initColorSwatches(optionClass, targetParts);
 }
 
-function initSkinOptions() {
-  const skinOptions = document.querySelectorAll('.skin-option');
-  
-  skinOptions.forEach(option => {
-    option.addEventListener('click', () => {
-      skinOptions.forEach(opt => opt.classList.remove('active'));
-      
-      option.classList.add('active');
+/**
+ * Initializes event listeners for color swatches
+ * @param {string} swatchClass - CSS class for the swatch buttons
+ * @param {THREE.Object3D[]} targetParts - Array of THREE.js objects to apply color to
+ */
+function initColorSwatches(swatchClass, targetParts) {
+  const swatches = document.querySelectorAll(swatchClass.replace(/^/, "."));
 
-      const color = option.dataset.color;
-            
-      updateSkinColor(color);
+  swatches.forEach(swatch => {
+    swatch.addEventListener("click", () => {
+      swatches.forEach(s => s.classList.remove('active'));
+      swatch.classList.add('active');
+      updateModelColor(swatch.dataset.color, targetParts);
     });
   });
 }
 
-function updateSkinColor(color) {
-  const threeColor = new THREE.Color(color);
-  
-  const bodyParts = [
-    models.get("Body"),
-    models.get("Head"),
-  ];
-  
-  bodyParts.forEach(part => {
-    if (part && part.material) {
-      part.material.color.copy(threeColor);
-    }
-  });
-}
-
-function createEyeGrid() {
-  const eyeOptionsContainer = document.querySelector('.eye-options');
-  eyeOptionsContainer.innerHTML = '';
-
-  const shapesRow = document.createElement('div');
-  shapesRow.className = 'eye-options-row';
-
-  const colorRow = document.createElement('div');
-  colorRow.className = 'eye-options-row';
-
-  // Add eye shapes
-
-  // Add eye colors
-  eyeCodes.forEach((color, index) => {
-    const button = createSwatch('eye-option', color, index === 0);
-    colorRow.append(button);
-  });
-
-  eyeOptionsContainer.append(colorRow);
-
-  initEyeOptions();
-}
-
-function initEyeOptions() {
-  const eyeOptions = document.querySelectorAll('.eye-option');
-
-  eyeOptions.forEach(option => {
-    option.addEventListener('click', () => {
-      eyeOptions.forEach(opt => opt.classList.remove('active'));
-
-      option.classList.add('active');
-
-      const color = option.dataset.color;
-
-      updateEyeColor(color);
-    })
-  })
-}
-
-function updateEyeColor(color) {
+/**
+ * Updates the color of target THREE.js model parts
+ * @param {string} color - Color value in hex format
+ * @param {THREE.Object3D[]} targetParts - Array of THREE.js objects to apply color to
+ */
+function updateModelColor(color, targetParts) {
   const threeColor = new THREE.Color(color);
 
-  const bodyParts = [
-    models.get("Left Iris"),
-    models.get("Right Iris"),
-  ];
-
-  bodyParts.forEach(part => {
-    if (part && part.material) {
+  targetParts.forEach(part => {
+    if (part?.material) {
       part.material.color.copy(threeColor);
     }
   });
@@ -295,8 +252,11 @@ async function init() {
     console.error("Error loading assets: ", err);
   }
 
-  createSkinGrid();
-  createEyeGrid();
+  const skinMeshGroup = [models.get("Body"), models.get("Hair")];
+  const eyeMeshGroup = [models.get("Left Iris"), models.get("Right Iris")];
+
+  createSwatchGrid(".skin-options", skinCodes, skinMeshGroup);
+  createSwatchGrid(".eye-options", eyeCodes, eyeMeshGroup);
   //createHairGrid();
   //createNoseGrid();
   //createMakeupGrid();

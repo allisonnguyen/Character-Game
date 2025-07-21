@@ -168,7 +168,7 @@ body,
     max-width: 90vw;
 }
 
-.skin-options-row, .eye-options-row {
+.options-row {
     display: flex;
     justify-content: center;
     flex-wrap: nowrap;
@@ -176,39 +176,32 @@ body,
     width: 100%;
 }
 
-.skin-options-row {
-    flex-wrap: nowrap;
-}
-
-.eye-options-row {
-    flex-wrap: wrap;
-}
-
 .skin-option, .eye-option {
-  width: clamp(100px, 10vw, 175px);
-  height: clamp(100px, 10vw, 175px);
-  border-radius: 50%;
-  border: 5px solid transparent;
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
- flex-shrink: 0;
+    width: clamp(100px, 10vw, 175px);
+    height: clamp(100px, 10vw, 175px);
+    border-radius: 50%;
+    border: 5px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    flex-shrink: 0;
 }
+
 
 .skin-option:hover, .eye-option:hover {
-  border-color: #ccc;
+    border-color: #ccc;
 }
 
 .skin-option.active, .eye-option.active {
-  border-color: #000;
+    border-color: #000;
 }
 
 .skin-option svg, .eye-option svg {
-  width: 90%;
-  height: 90%;
+    width: 90%;
+    height: 90%;
 }
 
 /* Mobile/Portrait devices (default to vertical split) */
