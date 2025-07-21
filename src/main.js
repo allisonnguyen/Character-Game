@@ -144,6 +144,26 @@ function initCategories() {
   });
 }
 
+function createSwatch(className, color, isActive) {
+    const button = document.createElement('button');
+    button.className = className;
+    if (isActive) button.classList.add('active');
+    button.dataset.color = color;
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    svg.setAttribute('viewBox', '0 -0.5 96 96');
+    svg.setAttribute('shape-rendering', 'crispEdges');
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('stroke', color);
+    path.setAttribute('d', 'M47 11h15M43 12h23M40 13h29M38 14h34M35 15h38M33 16h42M32 17h45M30 18h48M29 19h50M28 20h52M27 21h53M26 22h55M26 23h56M25 24h57M24 25h59M24 26h59M23 27h60M23 28h60M22 29h62M22 30h62M22 31h62M21 32h64M21 33h64M21 34h64M21 35h64M21 36h64M21 37h64M21 38h64M21 39h64M21 40h63M21 41h63M20 42h64M19 43h64M18 44h65M17 45h65M16 46h66M15 47h66M15 48h65M14 49h66M14 50h65M13 51h65M13 52h65M12 53h67M12 54h67M11 55h68M11 56h69M11 57h69M11 58h69M11 59h69M11 60h69M11 61h69M11 62h69M12 63h68M12 64h67M12 65h67M13 66h66M13 67h65M13 68h65M14 69h63M14 70h63M15 71h61M15 72h60M16 73h59M17 74h57M18 75h55M19 76h53M20 77h51M22 78h48M23 79h45M25 80h41M27 81h37M29 82h32M33 83h24M39 84h13');
+    
+    svg.appendChild(path);
+    button.appendChild(svg);
+    return button;
+}
+
 function createSkinGrid() {
     const skinOptionsContainer = document.querySelector('.skin-options');
     skinOptionsContainer.innerHTML = '';
@@ -163,13 +183,13 @@ function createSkinGrid() {
 
     // Add buttons to first row
     firstRowColors.forEach((color, index) => {
-        const button = createSkinButton(color, index === 0);
+        const button = createSwatch('skin-option', color, index === 0);
         row1.appendChild(button);
     });
 
     // Add buttons to second row
     secondRowColors.forEach((color, index) => {
-        const button = createSkinButton(color, false);
+        const button = createSwatch('skin-option', color, false);
         row2.appendChild(button);
     });
 
@@ -177,26 +197,6 @@ function createSkinGrid() {
     skinOptionsContainer.appendChild(row2);
 
     initSkinOptions();
-}
-
-function createSkinButton(color, isActive) {
-    const button = document.createElement('button');
-    button.className = 'skin-option';
-    if (isActive) button.classList.add('active');
-    button.dataset.color = color;
-
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    svg.setAttribute('viewBox', '0 -0.5 96 96');
-    svg.setAttribute('shape-rendering', 'crispEdges');
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('stroke', color);
-    path.setAttribute('d', 'M47 11h15M43 12h23M40 13h29M38 14h34M35 15h38M33 16h42M32 17h45M30 18h48M29 19h50M28 20h52M27 21h53M26 22h55M26 23h56M25 24h57M24 25h59M24 26h59M23 27h60M23 28h60M22 29h62M22 30h62M22 31h62M21 32h64M21 33h64M21 34h64M21 35h64M21 36h64M21 37h64M21 38h64M21 39h64M21 40h63M21 41h63M20 42h64M19 43h64M18 44h65M17 45h65M16 46h66M15 47h66M15 48h65M14 49h66M14 50h65M13 51h65M13 52h65M12 53h67M12 54h67M11 55h68M11 56h69M11 57h69M11 58h69M11 59h69M11 60h69M11 61h69M11 62h69M12 63h68M12 64h67M12 65h67M13 66h66M13 67h65M13 68h65M14 69h63M14 70h63M15 71h61M15 72h60M16 73h59M17 74h57M18 75h55M19 76h53M20 77h51M22 78h48M23 79h45M25 80h41M27 81h37M29 82h32M33 83h24M39 84h13');
-    
-    svg.appendChild(path);
-    button.appendChild(svg);
-    return button;
 }
 
 function initSkinOptions() {
@@ -230,6 +230,60 @@ function updateSkinColor(color) {
   });
 }
 
+function createEyeGrid() {
+  const eyeOptionsContainer = document.querySelector('.eye-options');
+  eyeOptionsContainer.innerHTML = '';
+
+  const shapesRow = document.createElement('div');
+  shapesRow.className = 'eye-options-row';
+
+  const colorRow = document.createElement('div');
+  colorRow.className = 'eye-options-row';
+
+  // Add eye shapes
+
+  // Add eye colors
+  eyeCodes.forEach((color, index) => {
+    const button = createSwatch('eye-option', color, index === 0);
+    colorRow.append(button);
+  });
+
+  eyeOptionsContainer.append(colorRow);
+
+  initEyeOptions();
+}
+
+function initEyeOptions() {
+  const eyeOptions = document.querySelectorAll('.eye-option');
+
+  eyeOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      eyeOptions.forEach(opt => opt.classList.remove('active'));
+
+      option.classList.add('active');
+
+      const color = option.dataset.color;
+
+      updateEyeColor(color);
+    })
+  })
+}
+
+function updateEyeColor(color) {
+  const threeColor = new THREE.Color(color);
+
+  const bodyParts = [
+    models.get("Left Iris"),
+    models.get("Right Iris"),
+  ];
+
+  bodyParts.forEach(part => {
+    if (part && part.material) {
+      part.material.color.copy(threeColor);
+    }
+  });
+}
+
 /**  ----------------------------- Setup Render ----------------------------- */
 async function init() {
   // Load assets
@@ -242,7 +296,7 @@ async function init() {
   }
 
   createSkinGrid();
-  //createEyeGrid();
+  createEyeGrid();
   //createHairGrid();
   //createNoseGrid();
   //createMakeupGrid();
@@ -290,7 +344,7 @@ async function init() {
   floor.rotation.x = -0.5 * Math.PI;
   floor.receiveShadow = true;
   floor.position.y = 0;
-  // scene.add(floor);
+  //scene.add(floor);
 
   // Body Meshes
   scene.add(models.get("Body"));
