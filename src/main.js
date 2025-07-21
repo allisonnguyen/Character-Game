@@ -144,6 +144,38 @@ function initCategories() {
   });
 }
 
+function initSkinOptions() {
+  const skinOptions = document.querySelectorAll('.skin-option');
+  
+  skinOptions.forEach(option => {
+    const color = option.dataset.color;
+    option.style.setProperty('--svg-color', color);
+
+    option.addEventListener('click', () => {
+      skinOptions.forEach(opt => opt.classList.remove('active'));
+      
+      option.classList.add('active');
+            
+      updateSkinColor(color);
+    });
+  });
+}
+
+function updateSkinColor(color) {
+  const threeColor = new THREE.Color(color);
+  
+  const bodyParts = [
+    models.get("Body"),
+    models.get("Head"),
+  ];
+  
+  bodyParts.forEach(part => {
+    if (part && part.material) {
+      part.material.color.copy(threeColor);
+    }
+  });
+}
+
 /**  ----------------------------- Setup Render ----------------------------- */
 async function init() {
   // Load assets
@@ -154,6 +186,8 @@ async function init() {
   } catch(err) {
     console.error("Error loading assets: ", err);
   }
+
+  initSkinOptions();
 
   // Environment
   const experienceContainer = document.querySelector("#experience-container");
