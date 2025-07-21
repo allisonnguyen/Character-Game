@@ -144,17 +144,71 @@ function initCategories() {
   });
 }
 
+function createSkinGrid() {
+    const skinOptionsContainer = document.querySelector('.skin-options');
+    skinOptionsContainer.innerHTML = '';
+
+    // Create first row
+    const row1 = document.createElement('div');
+    row1.className = 'skin-options-row';
+    
+    // Create second row
+    const row2 = document.createElement('div');
+    row2.className = 'skin-options-row';
+
+    // Split skin codes into two groups
+    const half = Math.ceil(skinCodes.length / 2);
+    const firstRowColors = skinCodes.slice(0, half);
+    const secondRowColors = skinCodes.slice(half);
+
+    // Add buttons to first row
+    firstRowColors.forEach((color, index) => {
+        const button = createSkinButton(color, index === 0);
+        row1.appendChild(button);
+    });
+
+    // Add buttons to second row
+    secondRowColors.forEach((color, index) => {
+        const button = createSkinButton(color, false);
+        row2.appendChild(button);
+    });
+
+    skinOptionsContainer.appendChild(row1);
+    skinOptionsContainer.appendChild(row2);
+
+    initSkinOptions();
+}
+
+function createSkinButton(color, isActive) {
+    const button = document.createElement('button');
+    button.className = 'skin-option';
+    if (isActive) button.classList.add('active');
+    button.dataset.color = color;
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    svg.setAttribute('viewBox', '0 -0.5 96 96');
+    svg.setAttribute('shape-rendering', 'crispEdges');
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('stroke', color);
+    path.setAttribute('d', 'M47 11h15M43 12h23M40 13h29M38 14h34M35 15h38M33 16h42M32 17h45M30 18h48M29 19h50M28 20h52M27 21h53M26 22h55M26 23h56M25 24h57M24 25h59M24 26h59M23 27h60M23 28h60M22 29h62M22 30h62M22 31h62M21 32h64M21 33h64M21 34h64M21 35h64M21 36h64M21 37h64M21 38h64M21 39h64M21 40h63M21 41h63M20 42h64M19 43h64M18 44h65M17 45h65M16 46h66M15 47h66M15 48h65M14 49h66M14 50h65M13 51h65M13 52h65M12 53h67M12 54h67M11 55h68M11 56h69M11 57h69M11 58h69M11 59h69M11 60h69M11 61h69M11 62h69M12 63h68M12 64h67M12 65h67M13 66h66M13 67h65M13 68h65M14 69h63M14 70h63M15 71h61M15 72h60M16 73h59M17 74h57M18 75h55M19 76h53M20 77h51M22 78h48M23 79h45M25 80h41M27 81h37M29 82h32M33 83h24M39 84h13');
+    
+    svg.appendChild(path);
+    button.appendChild(svg);
+    return button;
+}
+
 function initSkinOptions() {
   const skinOptions = document.querySelectorAll('.skin-option');
   
   skinOptions.forEach(option => {
-    const color = option.dataset.color;
-    option.style.setProperty('--svg-color', color);
-
     option.addEventListener('click', () => {
       skinOptions.forEach(opt => opt.classList.remove('active'));
       
       option.classList.add('active');
+
+      const color = option.dataset.color;
             
       updateSkinColor(color);
     });
@@ -187,7 +241,11 @@ async function init() {
     console.error("Error loading assets: ", err);
   }
 
-  initSkinOptions();
+  createSkinGrid();
+  //createEyeGrid();
+  //createHairGrid();
+  //createNoseGrid();
+  //createMakeupGrid();
 
   // Environment
   const experienceContainer = document.querySelector("#experience-container");
