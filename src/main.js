@@ -60,6 +60,12 @@ const hairCodes = [
   '#f7aebd',
 ];
 
+const hairstyles = {
+  'Spikey': '/public/media/spikey_hair.png',
+  'Wavy': '/public/media/wavy_hair.png',
+}
+const hairstyleNames = Object.keys(hairstyles);
+
 const BASE_COLOR = 0xf0f0f0f0;
 
 /**  -------------------------- Loader Preparations -------------------------- */
@@ -95,7 +101,7 @@ function loadTexture(path) {
 /**  -------------------------------- Models -------------------------------- */
 function loadModel(path) {
   return new Promise((resolve, reject) => {
-    const nameMap = {
+    const eyeMap = {
       "Sphere016": "Left Pupil",
       "Sphere016_1": "Left Iris",
       "Sphere015": "Right Pupil",
@@ -108,11 +114,14 @@ function loadModel(path) {
         gltf.scene.traverse((child) => {
           if (child.isMesh) {
             child.material = new THREE.MeshStandardMaterial({ color: BASE_COLOR });
+            if (hairstyles[child.name]) {
+              child.material.side = THREE.DoubleSide;
+            }
             child.castShadow = true;
             child.receiveShadow = true;
             
-            if (nameMap[child.name]) {
-              child.name = nameMap[child.name];
+            if (eyeMap[child.name]) {
+              child.name = eyeMap[child.name];
             }
             models.set(child.name, child);
           }
@@ -156,7 +165,6 @@ function initCategories() {
 function createSwatch(swatchClass, color, isActive) {
     const button = document.createElement('button');
     button.className = swatchClass;
-    if (isActive) button.classList.add('active');
     button.dataset.color = color;
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -218,7 +226,7 @@ function initColorSwatches(swatchClass, targetParts) {
   const swatches = document.querySelectorAll(swatchClass.replace(/^/, "."));
 
   swatches.forEach(swatch => {
-    swatch.addEventListener("click", () => {
+    swatch.addEventListener('click', () => {
       swatches.forEach(s => s.classList.remove('active'));
       swatch.classList.add('active');
       updateModelColor(swatch.dataset.color, targetParts);
@@ -241,6 +249,61 @@ function updateModelColor(color, targetParts) {
   });
 }
 
+function createMeshButtons(buttonClass, path, style, scene) {
+  const button = document.createElement('button');
+  button.className = buttonClass;
+
+  const image = document.createElement('img');
+  image.src = path;
+  image.alt = style;
+
+  button.appendChild(image);
+
+  button.addEventListener('click', () => {
+    const currentHair = scene.children.filter(child => 
+      hairstyleNames.includes(child.name)
+    );
+    
+    currentHair.forEach(hair => scene.remove(hair));
+    
+    const hairModel = models.get(style);
+    if (hairModel) {
+      scene.add(hairModel);
+
+      const activeSwatch = document.querySelector('.hair-color.active');
+      if (activeSwatch) {
+        updateModelColor(activeSwatch.dataset.color, [hairModel]);
+      }
+    }
+  })
+  return button;
+}
+
+function createStyle(containerSelector, scene, colorCodes) {
+  const styleContainer = document.querySelector(containerSelector);
+  styleContainer.innerHTML = '';
+
+  const styleRow = document.createElement('div');
+  styleRow.className = 'hair-styles';
+
+  Object.entries(hairstyles).forEach(([style, path]) => {
+    styleRow.appendChild(createMeshButtons('hairstyle-button', path, style, scene));
+  });
+
+  const colorRow = document.createElement('div');
+  colorRow.className = 'hair-colors';
+
+  const optionClass = colorRow.className.slice(0, -1);
+  colorCodes.forEach(color => {
+      colorRow.appendChild(createSwatch(optionClass, color, false));
+    });
+
+  styleContainer.appendChild(styleRow);
+  styleContainer.appendChild(colorRow);
+
+  initColorSwatches(optionClass, [models.get('Spikey'), models.get('Wavy')].filter(Boolean));
+}
+
 /**  ----------------------------- Setup Render ----------------------------- */
 async function init() {
   // Load assets
@@ -251,15 +314,6 @@ async function init() {
   } catch(err) {
     console.error("Error loading assets: ", err);
   }
-
-  const skinMeshGroup = [models.get("Body"), models.get("Hair")];
-  const eyeMeshGroup = [models.get("Left Iris"), models.get("Right Iris")];
-
-  createSwatchGrid(".skin-options", skinCodes, skinMeshGroup);
-  createSwatchGrid(".eye-options", eyeCodes, eyeMeshGroup);
-  //createHairGrid();
-  //createNoseGrid();
-  //createMakeupGrid();
 
   // Environment
   const experienceContainer = document.querySelector("#experience-container");
@@ -289,10 +343,12 @@ async function init() {
   scene.add(ambient);
  
   // Helpers
+  /**
   const shadowHelper = new THREE.CameraHelper(sun.shadow.camera);
   scene.add(shadowHelper);
   const helper = new THREE.DirectionalLightHelper(sun, 5);
   scene.add(helper);
+  */
 
   // Floor
   var floorGeometry = new THREE.PlaneGeometry(5000, 5000, 1, 1);
@@ -334,6 +390,7 @@ async function init() {
   controls.enablePan = false;
   controls.update();
 
+  // Experience Panel Buttons
   const settingsButton = document.getElementById('settings');
   settingsButton.addEventListener('click', () => {
     console.log("Settings");
@@ -345,6 +402,17 @@ async function init() {
     controls.target.set(0, 0.75, 0);
     controls.update();
   });
+
+  // Customization Panel Buttons
+  const skinMeshGroup = [models.get("Body"), models.get("Hair")];
+  const eyeMeshGroup = [models.get("Left Iris"), models.get("Right Iris")];
+
+  createSwatchGrid(".skin-options", skinCodes, skinMeshGroup);
+  createSwatchGrid(".eye-options", eyeCodes, eyeMeshGroup);
+  createStyle(".hair-options", scene, hairCodes);
+  //createNoseGrid();
+  //createMakeupGrid();
+
 
   // Event Listeners
   window.addEventListener("resize", () => {
