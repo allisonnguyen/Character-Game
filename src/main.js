@@ -1,5 +1,4 @@
 import './style.scss'
-import * as THREE from 'three';
 import { SceneManager } from './managers/scene-manager';
 import { UIManager } from './managers/ui-manager';
 import { MODEL_PATHS } from './config/constants';

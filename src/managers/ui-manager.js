@@ -43,7 +43,7 @@ export class UIManager {
         this.createSwatchGrid(
         '.skin-options',
         COLORS.SKIN,
-        [MODEL_PARTS.BODY, MODEL_PARTS.EYEBROWS]
+        [MODEL_PARTS.BODY]
         );
 
         this.createSwatchGrid(
@@ -99,7 +99,6 @@ export class UIManager {
      * Creates a color swatch button with an SVG icon
      * @param {string} swatchClass - CSS class for the button
      * @param {string} color - Color value in hex format
-     * @param {boolean} isActive - Whether the swatch should be active initially
      * @returns {HTMLButtonElement} The created swatch button
      */
     createSwatch(category, color) {
@@ -180,6 +179,10 @@ export class UIManager {
         button.appendChild(image);
 
         button.addEventListener('click', () => {
+            document.querySelectorAll(`.${buttonClass}`).forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
             this.sceneManager.setHairstyle(style);
         })
         
