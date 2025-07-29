@@ -1,5 +1,5 @@
 // managers/ui-manager.js
-import { COLORS, HAIR_STYLES, MODEL_PARTS, SWATCH_ICON_PATH } from '../config/constants';
+import { COLORS, HAIR_STYLES, NOSE_STYLES, MODEL_PARTS, SWATCH_ICON_PATH } from '../config/constants';
 
 export class UIManager {
     constructor(sceneManager) {
@@ -10,7 +10,8 @@ export class UIManager {
     init() {
         this.initCategories();
         this.initColorSwatches();
-        this.initHairstyleButtons();
+        this.initStyleButtons('.hair-styles', HAIR_STYLES);
+        this.initStyleButtons('.nose-styles', NOSE_STYLES);
         this.initControlButtons();
     }
 
@@ -34,11 +35,6 @@ export class UIManager {
         });
     }
 
-    /**
-     * Initializes event listeners for color swatches
-     * @param {string} swatchClass - CSS class for the swatch buttons
-     * @param {THREE.Object3D[]} targetParts - Array of THREE.js objects to apply color to
-     */
     initColorSwatches() {
         this.createSwatchGrid(
         '.skin-options',
@@ -57,14 +53,14 @@ export class UIManager {
         COLORS.HAIR,
         [MODEL_PARTS.HAIR_SPIKEY, MODEL_PARTS.HAIR_WAVY, MODEL_PARTS.EYEBROWS]
         );
+
+        this.createStylePanel(
+            '.nose-options',
+            COLORS.BLUSH,
+            [MODEL_PARTS.NOSE_TRIANGLE, MODEL_PARTS.NOSE_OVAL, MODEL_PARTS.NOSE_CUBE]
+        );
     }
 
-    /**
-     * Creates a grid of color swatches in the specified container
-     * @param {string} containerSelector - Selector for the container element
-     * @param {string[]} colors - Array of color values
-     * @param {THREE.Object3D[]} targetParts - Array of THREE.js objects to apply color to
-     */
     createSwatchGrid(containerSelector, colorCodes, targetParts) {
         const container = document.querySelector(containerSelector);
         if (!container) return;
@@ -95,12 +91,6 @@ export class UIManager {
         this.initSwatchEvents(category, targetParts);
     }
 
-    /**
-     * Creates a color swatch button with an SVG icon
-     * @param {string} swatchClass - CSS class for the button
-     * @param {string} color - Color value in hex format
-     * @returns {HTMLButtonElement} The created swatch button
-     */
     createSwatch(category, color) {
         const button = document.createElement('button');
         //console.log(category);
@@ -138,13 +128,15 @@ export class UIManager {
         const styleContainer = document.querySelector(containerSelector);
         styleContainer.innerHTML = '';
 
-        /** Hairstyles */
-        const styleRow = document.createElement('div');
-        styleRow.className = 'hair-styles';
+        const styleSelector = containerSelector.replace(/\.([^.]+)-options/, "$1");
 
-        /** Hair Colors */
+        /** Styles */
+        const styleRow = document.createElement('div');
+        styleRow.className = styleSelector + '-styles';
+
+        /** Style Colors */
         const colorRow = document.createElement('div');
-        colorRow.className = 'hair-colors';
+        colorRow.className = styleSelector + '-colors';
 
         const optionClass = colorRow.className.slice(0, -1);
         colorCodes.forEach(color => {
@@ -157,14 +149,14 @@ export class UIManager {
         this.initSwatchEvents(optionClass, targetParts);
     }
 
-    initHairstyleButtons() {
-        const container = document.querySelector('.hair-styles');
+    initStyleButtons(containerSelector, styles) {
+        const container = document.querySelector(containerSelector);
         if (!container) return;
 
         container.innerHTML = '';
         const buttonClass = container.className.slice(0, -1);
-        Object.entries(HAIR_STYLES).forEach(([name, path]) => {
-        container.appendChild(this.createMeshButtons(buttonClass, name, path));
+        Object.entries(styles).forEach(([name, path]) => {
+            container.appendChild(this.createMeshButtons(buttonClass, name, path));
         });
     }
 
@@ -183,7 +175,12 @@ export class UIManager {
                 btn.classList.remove('active');
             });
             button.classList.add('active');
-            this.sceneManager.setHairstyle(style);
+            if (buttonClass.includes('hair')) {
+                this.sceneManager.setHairstyle(style);
+            }
+            if (buttonClass.includes('nose')) {
+                this.sceneManager.setNosestyle(style);
+            }
         })
         
         return button;

@@ -6,8 +6,7 @@ import { MODEL_PATHS } from './config/constants';
 async function init() {
   const sceneManager = new SceneManager();
   await sceneManager.loadAssets(MODEL_PATHS);
-
-  // Environment
+  
   const experienceContainer = document.querySelector("#experience-container");
   const experienceCanvas = document.querySelector("#experience-canvas")
 

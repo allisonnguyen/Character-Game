@@ -36,15 +36,23 @@ export const COLORS = {
         '#ff874c',
         '#dd98cf',
         '#f7aebd',
+    ],
+    BLUSH: [
+        '#ffc5d3',
+        '#fc6c85',
+        '#ff007f',
+        '#a94064',
     ]
 };
 
 export const MODEL_PATHS = [
-  'models/body/head.glb',
   'models/body/base.glb',
   'models/body/eyebrows.glb',
-  'models/body/left-eye.glb',
-  'models/body/right-eye.glb',
+  'models/body/left_eye.glb',
+  'models/body/right_eye.glb',
+  'models/body/cube_nose.glb',
+  'models/body/oval_nose.glb',
+  'models/body/triangle_nose.glb',
   'models/clothing/askirt.glb',
   'models/clothing/lskirt.glb',
   'models/clothing/pants.glb',
@@ -56,8 +64,14 @@ export const MODEL_PATHS = [
 ];
 
 export const HAIR_STYLES = {
-  'Spikey': '/media/spikey_model.png',
-  'Wavy': '/media/wavy_model.png',
+  'Spikey': '/media/spikey.png',
+  'Wavy': '/media/wavy.png',
+}
+
+export const NOSE_STYLES = {
+    'Triangle Nose': '/media/triangle_nose.png',
+    'Oval Nose': '/media/oval_nose.png',
+    'Cube Nose': '/media/cube_nose.png',
 }
 
 export const SCENE_SETTINGS = {
@@ -106,5 +120,8 @@ export const MODEL_PARTS = {
   LEFT_PUPIL: 'Left Pupil',
   RIGHT_PUPIL: 'Right Pupil',
   HAIR_SPIKEY: 'Spikey',
-  HAIR_WAVY: 'Wavy'
+  HAIR_WAVY: 'Wavy',
+  NOSE_TRIANGLE: 'Triangle Nose',
+  NOSE_OVAL: 'Oval Nose',
+  NOSE_CUBE: 'Cube Nose',
 };

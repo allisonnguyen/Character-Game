@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { SCENE_SETTINGS, BASE_COLOR, MODEL_PARTS, HAIR_STYLES } from '../config/constants';
+import { SCENE_SETTINGS, BASE_COLOR, MODEL_PARTS, HAIR_STYLES, NOSE_STYLES } from '../config/constants';
 
 export class SceneManager {
     constructor() {
@@ -53,11 +53,14 @@ export class SceneManager {
 
     loadModel(path) {
       return new Promise((resolve, reject) => {
-        const eyeMap = {
+        const nameMap = {
           "Sphere016": MODEL_PARTS.LEFT_PUPIL,
           "Sphere016_1": MODEL_PARTS.LEFT_IRIS,
           "Sphere015": MODEL_PARTS.RIGHT_PUPIL,
           "Sphere015_1": MODEL_PARTS.RIGHT_IRIS,
+          "Triangle_Nose": MODEL_PARTS.NOSE_TRIANGLE,
+          "Oval_Nose": MODEL_PARTS.NOSE_OVAL,
+          "Cube_Nose": MODEL_PARTS.NOSE_CUBE,
         };
     
         this.gtfLoader.load(
@@ -72,8 +75,8 @@ export class SceneManager {
                 child.castShadow = true;
                 child.receiveShadow = true;
                 
-                if (eyeMap[child.name]) {
-                  child.name = eyeMap[child.name];
+                if (nameMap[child.name]) {
+                  child.name = nameMap[child.name];
                 }
                 this.models.set(child.name, child);
               }
@@ -172,6 +175,7 @@ export class SceneManager {
         this.addModelToScene(MODEL_PARTS.RIGHT_IRIS);
         this.addModelToScene(MODEL_PARTS.RIGHT_PUPIL);
         this.addModelToScene(MODEL_PARTS.EYEBROWS);
+        this.addModelToScene(MODEL_PARTS.NOSE_TRIANGLE);
 
         // Resize
         window.addEventListener("resize", () => {
@@ -202,11 +206,6 @@ export class SceneManager {
         }
     }
 
-    /**
-     * Updates the color of target THREE.js model parts
-     * @param {string} color - Color value in hex format
-     * @param {THREE.Object3D[]} targetParts - Array of THREE.js objects to apply color to
-     */
     updateModelColor(color, targetParts) {
         const threeColor = new THREE.Color(color);
         targetParts.forEach(part => {
@@ -219,6 +218,13 @@ export class SceneManager {
 
     setHairstyle(styleName) {
         Object.keys(HAIR_STYLES).forEach(style => {
+            this.removeModelFromScene(style);
+        })
+        this.addModelToScene(styleName);
+    }
+
+    setNosestyle(styleName) {
+        Object.keys(NOSE_STYLES).forEach(style => {
             this.removeModelFromScene(style);
         })
         this.addModelToScene(styleName);
