@@ -274,8 +274,8 @@ body,
 }
 
 .hair-style {
-    width: clamp(70px, 25vmin, 150px);
-    height: clamp(70px, 25vmin, 150px);
+    width: clamp(70px, 18vmin, 150px);
+    height: clamp(70px, 18vmin, 150px);
     border-radius: 35%;
     border: 5px solid transparent;
 }
@@ -294,8 +294,8 @@ body,
 
 .hair-color,
 .nose-color {
-    width: clamp(25px, 10vmin, 60px);
-    height: clamp(25px, 10vmin, 60px);
+    width: clamp(25px, 9vmin, 60px);
+    height: clamp(25px, 9vmin, 60px);
     border-radius: 50%;
     border: 3px solid transparent;
     background: transparent;
@@ -449,7 +449,7 @@ body,
 
     .hair-options,
     .face-options {
-        padding-top: 4vw;
+        padding-top: 2vw;
     }
 
     .hair-colors,
@@ -471,8 +471,8 @@ body,
 
     .hair-color,
     .nose-color {
-        width: clamp(30px, 10vmin, 60px);
-        height: clamp(30px, 10vmin, 60px);
+        width: clamp(30px, 10vmin, 80px);
+        height: clamp(30px, 10vmin, 80px);
         border-width: 3px;
     }
 }
@@ -483,7 +483,7 @@ body,
     }
 
     .options-panel {
-        padding-bottom: 4vw;
+        padding-bottom: 2vw;
     }
 
     .skin-option,
@@ -491,6 +491,10 @@ body,
         width: clamp(80px, 15vmin, 200px);
         height: clamp(80px, 15vmin, 200px);
         border-width: 8px;
+    }
+
+    .hair-options {
+        padding-top: 3vw;
     }
 
     .hair-style {
@@ -512,8 +516,8 @@ body,
 
     .hair-color,
     .nose-color {
-        width: clamp(80px, 8vmin, 125px);
-        height: clamp(80px, 8vmin, 125px);
+        width: clamp(70px, 8vmin, 125px);
+        height: clamp(70px, 8vmin, 125px);
         border-width: 5px;
     }
 }
