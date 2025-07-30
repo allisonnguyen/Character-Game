@@ -1,5 +1,5 @@
 // managers/ui-manager.js
-import { COLORS, HAIR_STYLES, NOSE_STYLES, MODEL_PARTS, SWATCH_ICON_PATH, BASE_COLOR } from '../config/constants';
+import { COLORS, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES, MODEL_PARTS, SWATCH_ICON_PATH } from '../config/constants';
 
 export class UIManager {
     constructor(sceneManager) {
@@ -12,6 +12,7 @@ export class UIManager {
         this.initColorSwatches();
         this.initStyleButtons('.hair-styles', HAIR_STYLES);
         this.initStyleButtons('.nose-styles', NOSE_STYLES);
+        this.initStyleButtons('.mouth-styles', MOUTH_STYLES);
         this.initControlButtons();
     }
 
@@ -58,6 +59,12 @@ export class UIManager {
             '.nose-options',
             COLORS.BLUSH,
             [MODEL_PARTS.NOSE_TRIANGLE, MODEL_PARTS.NOSE_OVAL, MODEL_PARTS.NOSE_CUBE]
+        );
+
+        this.createStylePanel(
+            '.mouth-options',
+            null,
+            [MODEL_PARTS.MOUTH_1, MODEL_PARTS.MOUTH_2, MODEL_PARTS.MOUTH_3]
         );
     }
 
@@ -118,10 +125,10 @@ export class UIManager {
 
         swatches.forEach(swatch => {
             swatch.addEventListener('click', () => {
-            swatches.forEach(s => s.classList.remove('active'));
-            swatch.classList.add('active');
-            this.activeSwatches.set(category, swatch.dataset.color);
-            this.sceneManager.updateModelColor(swatch.dataset.color, targetParts);
+                swatches.forEach(s => s.classList.remove('active'));
+                swatch.classList.add('active');
+                this.activeSwatches.set(category, swatch.dataset.color);
+                this.sceneManager.updateModelColor(swatch.dataset.color, targetParts);
             });
         });
     }
@@ -135,20 +142,20 @@ export class UIManager {
         /** Styles */
         const styleRow = document.createElement('div');
         styleRow.className = styleSelector + '-styles';
-
-        /** Style Colors */
-        const colorRow = document.createElement('div');
-        colorRow.className = styleSelector + '-colors';
-
-        const optionClass = colorRow.className.slice(0, -1);
-        colorCodes.forEach(color => {
-            colorRow.appendChild(this.createSwatch(optionClass, color));
-            });
-
         styleContainer.appendChild(styleRow);
-        styleContainer.appendChild(colorRow);
 
-        this.initSwatchEvents(optionClass, targetParts);
+        if (colorCodes) {
+            /** Style Colors */
+            const colorRow = document.createElement('div');
+            colorRow.className = styleSelector + '-colors';
+
+            const optionClass = colorRow.className.slice(0, -1);
+            colorCodes.forEach(color => {
+                colorRow.appendChild(this.createSwatch(optionClass, color));
+            });
+            styleContainer.appendChild(colorRow);
+            this.initSwatchEvents(optionClass, targetParts);
+        }
     }
 
     initStyleButtons(containerSelector, styles) {
@@ -173,8 +180,13 @@ export class UIManager {
 
             button.appendChild(image);
         }
+
         if (buttonClass.includes('nose')) {
             button.appendChild(this.createSVG('#F0F0F0', path))
+        }
+
+        if (buttonClass.includes('mouth')) {
+            button.appendChild(this.createSVG('#725147', path))
         }
 
         button.addEventListener('click', () => {
@@ -182,11 +194,17 @@ export class UIManager {
                 btn.classList.remove('active');
             });
             button.classList.add('active');
+
             if (buttonClass.includes('hair')) {
                 this.sceneManager.setHairstyle(style);
             }
+
             if (buttonClass.includes('nose')) {
                 this.sceneManager.setNosestyle(style);
+            }
+
+            if (buttonClass.includes('mouth')) {
+                this.sceneManager.setMouthstyle(style);
             }
         })
         

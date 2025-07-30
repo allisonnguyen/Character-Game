@@ -170,7 +170,7 @@ body,
 .skin-options,
 .eye-options,
 .hair-options,
-.nose-options {
+.face-options {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -180,8 +180,7 @@ body,
     height: 100%;
 }
 
-.hair-options,
-.nose-options {
+.hair-options {
     padding-top: 2vw;
     display: grid;
     grid-template-rows: 40% 60%;
@@ -190,17 +189,36 @@ body,
     height: 100%;
 }
 
+.face-options {
+    padding-top: 2vw;
+    display: grid;
+    grid-template-rows: 60% 40%;
+    grid-template-columns: 100%;
+    width: 100%;
+    height: 100%;
+}
+
+.nose-options {
+    display: grid;
+    grid-template-rows: 50% 50%;
+    grid-template-columns: 100%;
+    width: 100%;
+    height: 100%;
+}
+
 .hair-styles,
 .hair-colors,
 .nose-styles,
-.nose-colors {
+.nose-colors,
+.mouth-styles {
     width: 100%;
     min-height: 0;
     overflow: hidden;
 }
 
 .hair-styles,
-.nose-styles {
+.nose-styles,
+.mouth-styles {
     grid-row: 1;
     display: flex;
     flex-direction: row;
@@ -210,12 +228,13 @@ body,
 }
 
 .hair-colors,
-.nose-colors {
+.nose-colors,
+.mouth-styles {
     grid-row: 2;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
 }
 
@@ -243,7 +262,8 @@ body,
 }
 
 .hair-style,
-.nose-style {
+.nose-style,
+.mouth-style {
     background: transparent;
     cursor: pointer;
     display: flex;
@@ -260,7 +280,8 @@ body,
     border: 5px solid transparent;
 }
 
-.nose-style {
+.nose-style,
+.mouth-style {
     width: clamp(70px, 20vmin, 200px);
     height: clamp(50px, 17vmin, 150px);
     border: 4px solid transparent;
@@ -289,15 +310,24 @@ body,
 .hair-style:hover img,
 .hair-style.active img,
 .nose-style:hover svg,
-.nose-style.active svg {
+.nose-style.active svg,
+.mouth-style:hover svg,
+.mouth-style.active svg {
     object-fit: contain;
     transform: scale(1.2);
 }
 
-.hair-style img,
-.nose-style svg {
+.hair-style img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.nose-style svg,
+.mouth-style svg {
+    width: 60%;
+    height: 60%;
     object-fit: cover;
     object-position: center;
 }
@@ -306,7 +336,8 @@ body,
 .eye-option.active,
 .hair-color.active,
 .nose-style.active,
-.nose-color.active {
+.nose-color.active,
+.mouth-style.active {
     border-color: #00ced1;
 }
 
@@ -330,7 +361,7 @@ body,
     }
 
     .hair-options,
-    .nose-options {
+    .face-options {
         padding-top: 4vw;
     }
 
@@ -382,9 +413,10 @@ body,
         height: clamp(120px, 20vmin, 180px);
     }
 
-    .nose-style {
-        width: clamp(100px, 20vmin, 200px);
-        height: clamp(80px, 17vmin, 170px);
+    .nose-style,
+    .mouth-style {
+        width: clamp(100px, 17vmin, 200px);
+        height: clamp(80px, 14vmin, 170px);
         border-width: 6px;
     }
 
@@ -416,7 +448,7 @@ body,
     }
 
     .hair-options,
-    .nose-options {
+    .face-options {
         padding-top: 4vw;
     }
 
@@ -430,17 +462,18 @@ body,
         height: clamp(100px, 18vmin, 160px);
     }
 
-    .nose-style {
-        width: clamp(100px, 20vmin, 200px);
-        height: clamp(80px, 17vmin, 170px);
-        border-width: 6px;
+    .nose-style,
+    .mouth-style {
+        width: clamp(80px, 20vmin, 200px);
+        height: clamp(60px, 17vmin, 170px);
+        border-width: 4px;
     }
 
     .hair-color,
     .nose-color {
         width: clamp(30px, 10vmin, 60px);
         height: clamp(30px, 10vmin, 60px);
-        border-width: 4px;
+        border-width: 3px;
     }
 }
 
@@ -465,9 +498,10 @@ body,
         height: clamp(120px, 18vmin, 275px);
     }
 
-    .nose-style {
-        width: clamp(100px, 20vmin, 200px);
-        height: clamp(80px, 17vmin, 170px);
+    .nose-style,
+    .mouth-style {
+        width: clamp(100px, 20vmin, 170px);
+        height: clamp(80px, 17vmin, 150px);
         border-width: 7px;
     }
 

@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { SCENE_SETTINGS, BASE_COLOR, MODEL_PARTS, HAIR_STYLES, NOSE_STYLES } from '../config/constants';
+import { SCENE_SETTINGS, BASE_COLOR, MODEL_PARTS, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES } from '../config/constants';
 
 export class SceneManager {
     constructor() {
@@ -70,12 +70,11 @@ export class SceneManager {
           (gltf) => {
             gltf.scene.traverse((child) => {
               if (child.isMesh) {
-                child.material = new THREE.MeshStandardMaterial({ color: BASE_COLOR });
-
-                if (child.name in HAIR_STYLES) {
-                  child.material.side = THREE.DoubleSide;
-                }
-
+                child.material = new THREE.MeshStandardMaterial({ 
+                    color: BASE_COLOR,
+                    side: child.name in HAIR_STYLES ? THREE.DoubleSide : THREE.FrontSide,
+                 });
+                
                 child.castShadow = true;
                 child.receiveShadow = true;
                 
@@ -196,6 +195,7 @@ export class SceneManager {
         });
     }
 
+
     addModelToScene(modelName) {
         const model = this.models.get(modelName);
         if (model && !this.scene.children.includes(model)) {
@@ -220,6 +220,26 @@ export class SceneManager {
         })
     }
 
+    addMaskToScene(mask) {
+        if (mask && !this.scene.children.includes(mask)) {
+            this.scene.add(mask);
+        }
+    }
+
+    removeMaskFromScene(mask) {
+        if (mask && this.scene.children.includes(mask)) {
+            this.scene.remove(mask);
+        }
+    }
+
+    updateMaskColor(color, mask) {
+        const threeColor = new THREE.Color(color);
+        const texture = this.textures.get(mask);
+        if (texture?.material) {
+            texture.material.color.copy(threeColor);
+        }
+    }
+
     setHairstyle(styleName) {
         Object.keys(HAIR_STYLES).forEach(style => {
             this.removeModelFromScene(style);
@@ -232,6 +252,13 @@ export class SceneManager {
             this.removeModelFromScene(style);
         })
         this.addModelToScene(styleName);
+    }
+
+    setMouthstyle(styleName) {
+        Object.keys(MOUTH_STYLES).forEach(style => {
+            this.removeMaskFromScene(style);
+        })
+        this.addMaskToScene(styleName);
     }
 
     resetCamera() {
