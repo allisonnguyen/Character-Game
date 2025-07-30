@@ -24,10 +24,12 @@ export class SceneManager {
         this.gtfLoader.setDRACOLoader(this.dracoLoader);
     }
 
-    async loadAssets(modelPaths) {
+    async loadAssets(texturePaths, modelPaths) {
         try {
+            const texturePromises = texturePaths.map(path => this.loadTexture(path));
             const modelPromises = modelPaths.map(path => this.loadModel(path));
-            await Promise.all(modelPromises);
+            
+            await Promise.all([...modelPromises, ...texturePromises]);
         } catch(err) {
             console.error("Error loading assets: ", err);
             throw err;
@@ -39,7 +41,7 @@ export class SceneManager {
             this.textureLoader.load(
               path,
               (texture) => {
-                const name = path.split('/').pop();
+                const name = path.split('/').pop().split('.')[0];
                 texture.flipY = false;
                 texture.colorSpace = THREE.SRGBColorSpace;
                 this.textures.set(name, texture);
@@ -69,9 +71,11 @@ export class SceneManager {
             gltf.scene.traverse((child) => {
               if (child.isMesh) {
                 child.material = new THREE.MeshStandardMaterial({ color: BASE_COLOR });
+
                 if (child.name in HAIR_STYLES) {
                   child.material.side = THREE.DoubleSide;
                 }
+
                 child.castShadow = true;
                 child.receiveShadow = true;
                 

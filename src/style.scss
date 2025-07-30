@@ -236,16 +236,14 @@ body,
 }
 
 .skin-option:hover,
-.eye-option:hover {
+.eye-option:hover,
+.hair-color:hover,
+.nose-color:hover {
     border-color: #ccc;
 }
 
 .hair-style,
 .nose-style {
-    width: clamp(70px, 25vmin, 150px);
-    height: clamp(70px, 25vmin, 150px);
-    border-radius: 35%;
-    border: 5px solid transparent;
     background: transparent;
     cursor: pointer;
     display: flex;
@@ -255,8 +253,21 @@ body,
     min-width: 0;
 }
 
-.hair-style.active,
-.nose-style.active {
+.hair-style {
+    width: clamp(70px, 25vmin, 150px);
+    height: clamp(70px, 25vmin, 150px);
+    border-radius: 35%;
+    border: 5px solid transparent;
+}
+
+.nose-style {
+    width: clamp(70px, 20vmin, 200px);
+    height: clamp(50px, 17vmin, 150px);
+    border: 4px solid transparent;
+    border-radius: 40%;
+}
+
+.hair-style.active {
     background: #00ced1;
 }
 
@@ -268,6 +279,7 @@ body,
     border: 3px solid transparent;
     background: transparent;
     cursor: pointer;
+    padding: 3px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -276,14 +288,14 @@ body,
 
 .hair-style:hover img,
 .hair-style.active img,
-.nose-style:hover img,
-.nose-style.active img {
+.nose-style:hover svg,
+.nose-style.active svg {
     object-fit: contain;
     transform: scale(1.2);
 }
 
 .hair-style img,
-.nose-style img {
+.nose-style svg {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -293,6 +305,7 @@ body,
 .skin-option.active,
 .eye-option.active,
 .hair-color.active,
+.nose-style.active,
 .nose-color.active {
     border-color: #00ced1;
 }
@@ -316,11 +329,13 @@ body,
         height: clamp(60px, 10vmin, 115px);
     }
 
-    .hair-options {
+    .hair-options,
+    .nose-options {
         padding-top: 4vw;
     }
 
-    .hair-colors {
+    .hair-colors,
+    .nose-colors {
         gap: 4px;
     }
 
@@ -329,7 +344,13 @@ body,
         height: clamp(100px, 18vmin, 160px);
     }
 
-    .hair-color {
+    .nose-style {
+        width: clamp(70px, 20vmin, 200px);
+        height: clamp(50px, 17vmin, 150px);
+    }
+
+    .hair-color,
+    .nose-color {
         width: clamp(30px, 10vmin, 60px);
         height: clamp(30px, 10vmin, 60px);
     }
@@ -361,10 +382,17 @@ body,
         height: clamp(120px, 20vmin, 180px);
     }
 
-    .hair-color {
+    .nose-style {
+        width: clamp(100px, 20vmin, 200px);
+        height: clamp(80px, 17vmin, 170px);
+        border-width: 6px;
+    }
+
+    .hair-color,
+    .nose-color {
         width: clamp(50px, 8vmin, 80px);
         height: clamp(50px, 8vmin, 80px);
-        border-width: 4px;
+        border-width: 5px;
     }
 }
 
@@ -387,11 +415,13 @@ body,
         height: clamp(60px, 10vmin, 115px);
     }
 
-    .hair-options {
+    .hair-options,
+    .nose-options {
         padding-top: 4vw;
     }
 
-    .hair-colors {
+    .hair-colors,
+    .nose-colors {
         gap: 4px;
     }
 
@@ -400,15 +430,27 @@ body,
         height: clamp(100px, 18vmin, 160px);
     }
 
-    .hair-color {
+    .nose-style {
+        width: clamp(100px, 20vmin, 200px);
+        height: clamp(80px, 17vmin, 170px);
+        border-width: 6px;
+    }
+
+    .hair-color,
+    .nose-color {
         width: clamp(30px, 10vmin, 60px);
         height: clamp(30px, 10vmin, 60px);
+        border-width: 4px;
     }
 }
 
 @media (min-width: 1024px) {
     #customization-panel {
         padding: 20px 40px;
+    }
+
+    .options-panel {
+        padding-bottom: 4vw;
     }
 
     .skin-option,
@@ -423,13 +465,21 @@ body,
         height: clamp(120px, 18vmin, 275px);
     }
 
-    .hair-colors {
+    .nose-style {
+        width: clamp(100px, 20vmin, 200px);
+        height: clamp(80px, 17vmin, 170px);
+        border-width: 7px;
+    }
+
+    .hair-colors,
+    .nose-colors {
         gap: 10px;
     }
 
-    .hair-color {
+    .hair-color,
+    .nose-color {
         width: clamp(80px, 8vmin, 125px);
         height: clamp(80px, 8vmin, 125px);
-        border-width: 6px;
+        border-width: 5px;
     }
 }

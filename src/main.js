@@ -1,11 +1,11 @@
 import './style.scss'
 import { SceneManager } from './managers/scene-manager';
 import { UIManager } from './managers/ui-manager';
-import { MODEL_PATHS } from './config/constants';
+import { TEXTURE_PATHS, MODEL_PATHS } from './config/constants';
 
 async function init() {
   const sceneManager = new SceneManager();
-  await sceneManager.loadAssets(MODEL_PATHS);
+  await sceneManager.loadAssets(TEXTURE_PATHS, MODEL_PATHS);
   
   const experienceContainer = document.querySelector("#experience-container");
   const experienceCanvas = document.querySelector("#experience-canvas")

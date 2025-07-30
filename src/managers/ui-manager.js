@@ -1,5 +1,5 @@
 // managers/ui-manager.js
-import { COLORS, HAIR_STYLES, NOSE_STYLES, MODEL_PARTS, SWATCH_ICON_PATH } from '../config/constants';
+import { COLORS, HAIR_STYLES, NOSE_STYLES, MODEL_PARTS, SWATCH_ICON_PATH, BASE_COLOR } from '../config/constants';
 
 export class UIManager {
     constructor(sceneManager) {
@@ -91,12 +91,7 @@ export class UIManager {
         this.initSwatchEvents(category, targetParts);
     }
 
-    createSwatch(category, color) {
-        const button = document.createElement('button');
-        //console.log(category);
-        button.className = category;
-        button.dataset.color = color;
-
+    createSVG(color, data) {
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
         svg.setAttribute('viewBox', '0 -0.5 96 96');
@@ -104,10 +99,17 @@ export class UIManager {
 
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('stroke', color);
-        path.setAttribute('d', SWATCH_ICON_PATH);
+        path.setAttribute('d', data);
         
         svg.appendChild(path);
-        button.appendChild(svg);
+        return svg;
+    }
+
+    createSwatch(category, color) {
+        const button = document.createElement('button');
+        button.className = category;
+        button.dataset.color = color;
+        button.appendChild(this.createSVG(color, SWATCH_ICON_PATH));
         return button;
     }
 
@@ -164,11 +166,16 @@ export class UIManager {
         const button = document.createElement('button');
         button.className = buttonClass;
 
-        const image = document.createElement('img');
-        image.src = path;
-        image.alt = style;
+        if (buttonClass.includes('hair')) {
+            const image = document.createElement('img');
+            image.src = path;
+            image.alt = style;
 
-        button.appendChild(image);
+            button.appendChild(image);
+        }
+        if (buttonClass.includes('nose')) {
+            button.appendChild(this.createSVG('#F0F0F0', path))
+        }
 
         button.addEventListener('click', () => {
             document.querySelectorAll(`.${buttonClass}`).forEach(btn => {
