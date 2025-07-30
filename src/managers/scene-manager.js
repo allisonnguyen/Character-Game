@@ -3,7 +3,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { SCENE_SETTINGS, BASE_COLOR, MODEL_PARTS, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES } from '../config/constants';
+import { normalizeColor } from '../utils/colorUtils';
+import { SCENE_SETTINGS, COLORS, MODEL_PARTS, HAIR_STYLES } from '../config/constants';
 
 export class SceneManager {
     constructor() {
@@ -71,7 +72,7 @@ export class SceneManager {
             gltf.scene.traverse((child) => {
               if (child.isMesh) {
                 child.material = new THREE.MeshStandardMaterial({ 
-                    color: BASE_COLOR,
+                    color: normalizeColor(COLORS.BASE),
                     side: child.name in HAIR_STYLES ? THREE.DoubleSide : THREE.FrontSide,
                  });
                 
@@ -93,7 +94,7 @@ export class SceneManager {
     }
 
     setupScene(experienceContainer, experienceCanvas) {
-        this.scene.background = new THREE.Color(BASE_COLOR);
+        this.scene.background = new THREE.Color(normalizeColor(COLORS.BASE));
 
         this.sizes =  {
             width: experienceContainer.clientWidth,
@@ -220,45 +221,43 @@ export class SceneManager {
         })
     }
 
-    addMaskToScene(mask) {
-        if (mask && !this.scene.children.includes(mask)) {
-            this.scene.add(mask);
-        }
+    createMouthMask(styleName) {
+        const textureName = styleName.toLowerCase().replace(' ', '_') + '_mask';
+        const mouthMaterial = new THREE.MeshStandardMaterial({
+            map: this.textures.get(textureName),
+            alphaMap: this.textures.get(textureName),
+            transparent: true,
+            blending: THREE.CustomBlending,
+            blendSrc: THREE.SrcAlphaFactor,
+            blendDst: THREE.OneMinusSrcAlphaFactor,
+            color: normalizeColor(COLORS.MOUTH),
+            opacity: 1,
+            depthWrite: false,
+        });
+
+        const mouthMesh = new THREE.Mesh(
+            this.models.get(MODEL_PARTS.BODY).geometry.clone(),
+            mouthMaterial
+        );
+        
+        this.models.set(styleName, mouthMesh);
+        
+        return mouthMesh;
     }
 
-    removeMaskFromScene(mask) {
-        if (mask && this.scene.children.includes(mask)) {
-            this.scene.remove(mask);
-        }
-    }
-
-    updateMaskColor(color, mask) {
-        const threeColor = new THREE.Color(color);
-        const texture = this.textures.get(mask);
-        if (texture?.material) {
-            texture.material.color.copy(threeColor);
-        }
-    }
-
-    setHairstyle(styleName) {
-        Object.keys(HAIR_STYLES).forEach(style => {
+    setStyle(category, styleName) {
+        Object.keys(category).forEach(style => {
             this.removeModelFromScene(style);
         })
-        this.addModelToScene(styleName);
-    }
 
-    setNosestyle(styleName) {
-        Object.keys(NOSE_STYLES).forEach(style => {
-            this.removeModelFromScene(style);
-        })
+        if (styleName.toLowerCase().includes("mouth")) {
+            let mouthMesh = this.models.get(styleName);
+            if (!mouthMesh) {
+                mouthMesh = this.createMouthMask(styleName);
+            }
+        }
+        
         this.addModelToScene(styleName);
-    }
-
-    setMouthstyle(styleName) {
-        Object.keys(MOUTH_STYLES).forEach(style => {
-            this.removeMaskFromScene(style);
-        })
-        this.addMaskToScene(styleName);
     }
 
     resetCamera() {

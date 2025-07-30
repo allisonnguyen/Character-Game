@@ -196,15 +196,15 @@ export class UIManager {
             button.classList.add('active');
 
             if (buttonClass.includes('hair')) {
-                this.sceneManager.setHairstyle(style);
+                this.sceneManager.setStyle(HAIR_STYLES, style);
             }
 
             if (buttonClass.includes('nose')) {
-                this.sceneManager.setNosestyle(style);
+               this.sceneManager.setStyle(NOSE_STYLES, style);
             }
 
             if (buttonClass.includes('mouth')) {
-                this.sceneManager.setMouthstyle(style);
+                this.sceneManager.setStyle(MOUTH_STYLES, style);
             }
         })
         
