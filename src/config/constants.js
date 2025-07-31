@@ -65,37 +65,42 @@ export const TEXTURE_PATHS = [
 
 export const MODEL_PATHS = [
   'models/body/base.glb',
+  'models/body/body.glb',
   'models/body/eyebrows.glb',
-  'models/body/left_eye.glb',
-  'models/body/right_eye.glb',
+  'models/body/left_iris.glb',
+  'models/body/left_pupil.glb',
+  'models/body/right_iris.glb',
+  'models/body/right_pupil.glb',
   'models/body/cube_nose.glb',
   'models/body/oval_nose.glb',
   'models/body/triangle_nose.glb',
+
   'models/clothing/askirt.glb',
   'models/clothing/lskirt.glb',
   'models/clothing/pants.glb',
   'models/clothing/shorts.glb',
   'models/clothing/tshirt.glb',
   'models/clothing/yshirt.glb',
+  
   'models/hair/spikey.glb',
   'models/hair/wavy.glb',
 ];
 
 export const HAIR_STYLES = {
-  'Spikey': '/media/spikey.png',
-  'Wavy': '/media/wavy.png',
+  'spikey': '/media/spikey.png',
+  'wavy': '/media/wavy.png',
 }
 
 export const NOSE_STYLES = {
-    'Triangle Nose': TRIANGLE_NOSE_PATH,
-    'Oval Nose': OVAL_NOSE_PATH,
-    'Cube Nose': CUBE_NOSE_PATH,
+    'triangle_nose': TRIANGLE_NOSE_PATH,
+    'oval_nose': OVAL_NOSE_PATH,
+    'cube_nose': CUBE_NOSE_PATH,
 }
 
 export const MOUTH_STYLES = {
-    'Mouth 1': MOUTH_1_PATH,
-    'Mouth 2': MOUTH_2_PATH,
-    'Mouth 3': MOUTH_3_PATH,
+    'mouth 1': MOUTH_1_PATH,
+    'mouth 2': MOUTH_2_PATH,
+    'mouth 3': MOUTH_3_PATH,
 }
 
 export const SCENE_SETTINGS = {
@@ -137,20 +142,20 @@ export const SCENE_SETTINGS = {
 };
 
 export const MODEL_PARTS = {
-  BODY: 'Body',
-  EYEBROWS: 'Eyebrows',
-  LEFT_IRIS: 'Left Iris',
-  RIGHT_IRIS: 'Right Iris',
-  LEFT_PUPIL: 'Left Pupil',
-  RIGHT_PUPIL: 'Right Pupil',
-  HAIR_SPIKEY: 'Spikey',
-  HAIR_WAVY: 'Wavy',
-  NOSE_TRIANGLE: 'Triangle Nose',
-  NOSE_OVAL: 'Oval Nose',
-  NOSE_CUBE: 'Cube Nose',
-  MOUTH_1: 'Mouth 1',
-  MOUTH_2: 'Mouth 2',
-  MOUTH_3: 'Mouth 3',
-  BLUSH_1: 'Blush 1',
-  BLUSH_2: 'Blush 2',
+  BODY: 'body',
+  EYEBROWS: 'eyebrows',
+  LEFT_IRIS: 'left_iris',
+  RIGHT_IRIS: 'right_iris',
+  LEFT_PUPIL: 'left_pupil',
+  RIGHT_PUPIL: 'right_pupil',
+  HAIR_SPIKEY: 'spikey',
+  HAIR_WAVY: 'wavy',
+  NOSE_TRIANGLE: 'triangle_nose',
+  NOSE_OVAL: 'oval_nose',
+  NOSE_CUBE: 'cube_nose',
+  MOUTH_1: 'mouth 1',
+  MOUTH_2: 'mouth 2',
+  MOUTH_3: 'mouth 3',
+  BLUSH_1: 'blush 1',
+  BLUSH_2: 'blush 2',
 };

@@ -8,7 +8,7 @@ async function init() {
   await sceneManager.loadAssets(TEXTURE_PATHS, MODEL_PATHS);
 
   const experienceContainer = document.querySelector("#experience-container");
-  const experienceCanvas = document.querySelector("#experience-canvas")
+  const experienceCanvas = document.querySelector("#experience-canvas");
 
   sceneManager.setupScene(experienceContainer, experienceCanvas);
 

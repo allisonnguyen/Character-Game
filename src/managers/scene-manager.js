@@ -11,6 +11,8 @@ export class SceneManager {
         this.models = new Map();
         this.textures = new Map();
         this.scene = new THREE.Scene();
+        this.animations = new Map();
+        this.clock = new THREE.Clock();
         this.render = this.render.bind(this);   // Bind to SceneManager instance for passing to requestAnimationFrame
         this.initLoaders();
     }
@@ -55,42 +57,47 @@ export class SceneManager {
     }
 
     loadModel(path) {
-      return new Promise((resolve, reject) => {
-        const nameMap = {
-          "Sphere016": MODEL_PARTS.LEFT_PUPIL,
-          "Sphere016_1": MODEL_PARTS.LEFT_IRIS,
-          "Sphere015": MODEL_PARTS.RIGHT_PUPIL,
-          "Sphere015_1": MODEL_PARTS.RIGHT_IRIS,
-          "Triangle_Nose": MODEL_PARTS.NOSE_TRIANGLE,
-          "Oval_Nose": MODEL_PARTS.NOSE_OVAL,
-          "Cube_Nose": MODEL_PARTS.NOSE_CUBE,
-        };
-    
-        this.gtfLoader.load(
-          path,
-          (gltf) => {
-            gltf.scene.traverse((child) => {
-              if (child.isMesh) {
-                child.material = new THREE.MeshStandardMaterial({ 
+        return new Promise((resolve, reject) => {
+            this.gtfLoader.load(
+            path,
+            (gltf) => {
+                const modelName = path.split('/').pop().replace('.glb', '');
+                
+                // Create a group to contain the original scene
+                const modelGroup = new THREE.Group();
+                modelGroup.add(gltf.scene);
+                
+                // Process materials for all meshes
+                gltf.scene.traverse((child) => {
+                if (child.isMesh) {
+                    child.material = new THREE.MeshStandardMaterial({ 
                     color: normalizeColor(COLORS.BASE),
-                    side: child.name in HAIR_STYLES ? THREE.DoubleSide : THREE.FrontSide,
-                 });
-                
-                child.castShadow = true;
-                child.receiveShadow = true;
-                
-                if (nameMap[child.name]) {
-                  child.name = nameMap[child.name];
+                    side: child.name.toLowerCase() in HAIR_STYLES ? THREE.DoubleSide : THREE.FrontSide,
+                    });
+                    child.castShadow = true;
+                    child.receiveShadow = true;
                 }
-                this.models.set(child.name, child);
-              }
-            });
-            resolve(gltf);
-          },
-          undefined,
-          (error) => reject(error)
-        );
-      });
+                });
+
+                this.models.set(modelName, modelGroup);
+
+                if (gltf.animations && gltf.animations.length) {
+                // Create mixer with the original scene (not the group)
+                const mixer = new THREE.AnimationMixer(gltf.scene);
+                this.animations.set(modelName, mixer);
+                    
+                gltf.animations.forEach((clip) => {
+                        const action = mixer.clipAction(clip);
+                        action.play();
+                    });
+                }
+
+                resolve(gltf);
+            },
+            undefined,
+            (error) => reject(error)
+            );
+        });
     }
 
     setupScene(experienceContainer, experienceCanvas) {
@@ -215,14 +222,38 @@ export class SceneManager {
         const threeColor = new THREE.Color(color);
         targetParts.forEach(part => {
             const model = this.models.get(part);
-            if (model?.material) {
-                model.material.color.copy(threeColor);
+            if (model) {
+                model.traverse(child => {
+                    if (child.isMesh && child.material) {
+                        child.material.color.copy(threeColor);
+                    }
+                });
             }
-        })
+        });
     }
 
     createMouthMask(styleName) {
-        const textureName = styleName.toLowerCase().replace(' ', '_') + '_mask';
+        // Create mouth mask as skinned mesh using body skeleton
+        const textureName = styleName.replace(' ', '_') + '_mask';
+        const bodyModel = this.models.get(MODEL_PARTS.BODY);
+        
+        // Find body mesh and skeleton
+        let bodyMesh = null;
+        let skeleton = null;
+        
+        bodyModel.traverse(child => {
+            if (child.isSkinnedMesh && !bodyMesh) {
+                bodyMesh = child;
+                skeleton = child.skeleton;
+            }
+        });
+
+        if (!bodyMesh || !skeleton) {
+            console.error("Could not find skinned body mesh or skeleton");
+            return null;
+        }
+
+        // Create mouth material
         const mouthMaterial = new THREE.MeshStandardMaterial({
             map: this.textures.get(textureName),
             alphaMap: this.textures.get(textureName),
@@ -235,14 +266,18 @@ export class SceneManager {
             depthWrite: false,
         });
 
-        const mouthMesh = new THREE.Mesh(
-            this.models.get(MODEL_PARTS.BODY).geometry.clone(),
+        const mouthMesh = new THREE.SkinnedMesh(
+            bodyMesh.geometry.clone().translate(0, 0, 0.01),
             mouthMaterial
         );
+
+        mouthMesh.bind(skeleton, bodyMesh.bindMatrix);
+
+        const mouthGroup = new THREE.Group();
+        mouthGroup.add(mouthMesh);
+        this.models.set(styleName, mouthGroup);
         
-        this.models.set(styleName, mouthMesh);
-        
-        return mouthMesh;
+        return mouthGroup;
     }
 
     setStyle(category, styleName) {
@@ -267,6 +302,8 @@ export class SceneManager {
     }
 
     render() {
+        const delta = this.clock.getDelta();
+        this.animations.forEach((mixer) => mixer.update(delta));
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
         window.requestAnimationFrame(this.render);
