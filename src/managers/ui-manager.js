@@ -1,5 +1,5 @@
 // managers/ui-manager.js
-import { COLORS, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES, MODEL_PARTS, SWATCH_ICON_PATH } from '../config/constants';
+import { COLORS, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES, MODEL_PARTS, FULL_BODY, SWATCH_ICON_PATH } from '../config/constants';
 
 export class UIManager {
     constructor(sceneManager) {
@@ -22,16 +22,20 @@ export class UIManager {
 
         categoryButtons.forEach(button => {
             button.addEventListener("click", () => {
-            categoryButtons.forEach(btn => btn.classList.remove('active'));
-            optionPanels.forEach(panel => panel.classList.remove('active'));
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                optionPanels.forEach(panel => panel.classList.remove('active'));
 
-            button.classList.add('active');
+                button.classList.add('active');
 
-            const optionsType = button.dataset.options;
-            const targetPanel = document.querySelector(`.options-content[data-options="${optionsType}"]`);
-            if (targetPanel) {
-                targetPanel.classList.add('active');
-            }
+                const optionsType = button.dataset.options;
+                const targetPanel = document.querySelector(`.options-content[data-options="${optionsType}"]`);
+                if (targetPanel) {
+                    targetPanel.classList.add('active');
+                }
+
+                if (optionsType === 'hair') {
+                    this.sceneManager.playAnimation(FULL_BODY, 'LookUp');
+                }
             });
         });
     }

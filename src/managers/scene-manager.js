@@ -4,15 +4,21 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { normalizeColor } from '../utils/colorUtils';
-import { SCENE_SETTINGS, COLORS, MODEL_PARTS, HAIR_STYLES } from '../config/constants';
+import { SCENE_SETTINGS, COLORS, MODEL_PARTS, MODEL_CLOTHING, HAIR_STYLES } from '../config/constants';
 
 export class SceneManager {
     constructor() {
         this.models = new Map();
         this.textures = new Map();
         this.scene = new THREE.Scene();
-        this.animations = new Map();
+
+        this.animationsMap = new Map();
+        this.gltfAnimations = new THREE.AnimationClip;
         this.clock = new THREE.Clock();
+
+        this.mouse = new THREE.Vector2();
+        this.setupMouseTracking();
+
         this.render = this.render.bind(this);   // Bind to SceneManager instance for passing to requestAnimationFrame
         this.initLoaders();
     }
@@ -82,16 +88,26 @@ export class SceneManager {
                 this.models.set(modelName, modelGroup);
 
                 if (gltf.animations && gltf.animations.length) {
-                // Create mixer with the original scene (not the group)
-                const mixer = new THREE.AnimationMixer(gltf.scene);
-                this.animations.set(modelName, mixer);
+                    this.gltfAnimations = gltf.animations;
                     
-                gltf.animations.forEach((clip) => {
+                    // Create mixer with the original scene (not the group)
+                    const mixer = new THREE.AnimationMixer(gltf.scene);
+                    const modelActions = {};
+                    
+                    for (const clip of this.gltfAnimations) {
                         const action = mixer.clipAction(clip);
-                        action.play();
+                        modelActions[clip.name] = action;
+                        
+                        if (clip.name.includes('Blinking') || clip.name.includes('Idle')) {
+                            action.play();
+                        }
+                    }
+                    
+                    this.animationsMap.set(modelName, {
+                        mixer: mixer,
+                        actions: modelActions
                     });
                 }
-
                 resolve(gltf);
             },
             undefined,
@@ -187,6 +203,8 @@ export class SceneManager {
         this.addModelToScene(MODEL_PARTS.RIGHT_PUPIL);
         this.addModelToScene(MODEL_PARTS.EYEBROWS);
         this.addModelToScene(MODEL_PARTS.NOSE_TRIANGLE);
+        this.addModelToScene(MODEL_CLOTHING.TSHIRT);
+        this.addModelToScene(MODEL_CLOTHING.SHORTS);
 
         // Resize
         window.addEventListener("resize", () => {
@@ -301,9 +319,47 @@ export class SceneManager {
         this.controls.update();
     }
 
+    playAnimation(targetParts, actionName) {
+        targetParts.forEach(part => {
+            const animationData = this.animationsMap.get(part);
+            if (animationData) {
+                const action = animationData.actions[actionName];
+                if (action) {
+                    action.setLoop( THREE.LoopOnce );
+                    action.clampWhenFinished = true;
+                    action.reset().play();
+                }
+            }
+        });
+    }
+
+    setupMouseTracking() {
+        window.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+
+            const anchor = document.getElementById('experience-container');
+            const rect = anchor.getBoundingClientRect();
+            const anchorX = rect.left + rect.width / 2;
+            const anchorY = rect.right + rect.height / 2;
+
+            const angleDeg = this.angle(mouseX, mouseY, anchorX, anchorY);
+        })
+    }
+
+    angle(cx, cy, ex, ey) {
+        const dy = ey - cy;
+        const dx = ex - cx;
+        const rad = Math.atan2(dy, dx);
+        const deg = rad * 180 / Math.PI;
+        return deg;
+    }
+
     render() {
         const delta = this.clock.getDelta();
-        this.animations.forEach((mixer) => mixer.update(delta));
+        this.animationsMap.forEach((animationData) => {
+            animationData.mixer.update(delta);
+        });
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
         window.requestAnimationFrame(this.render);
