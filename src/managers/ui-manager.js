@@ -18,9 +18,14 @@ export class UIManager {
     initCategories() {
         const categoryButtons = document.querySelectorAll('.category-btn');
         const optionPanels = document.querySelectorAll('.options-content');
+        let currentCategory = null;
 
         categoryButtons.forEach(button => {
             button.addEventListener("click", () => {
+                const newCategory = button.dataset.options;
+
+                if (newCategory == currentCategory) return;
+
                 categoryButtons.forEach(btn => btn.classList.remove('active'));
                 optionPanels.forEach(panel => panel.classList.remove('active'));
 
@@ -30,12 +35,18 @@ export class UIManager {
                 const targetPanel = document.querySelector(`.options-content[data-options="${optionsType}"]`);
                 
                 if (optionsType === 'hair') {
-                    this.sceneManager.playAnimation(FULL_BODY, 'LookUp');
+                    if (currentCategory !== 'hair') {
+                        this.sceneManager.playAnimation(FULL_BODY, 'LookUp');
+                    }
+                } else if (currentCategory === 'hair') {
+                    this.sceneManager.playAnimation(FULL_BODY, 'LookBack');
                 }
 
                 if (targetPanel) {
                     targetPanel.classList.add('active');
                 }
+                
+                currentCategory = newCategory;
             });
         });
     }

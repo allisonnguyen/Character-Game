@@ -95,11 +95,21 @@ export class SceneManager {
                     // Create mixer with the original scene (not the group)
                     const mixer = new THREE.AnimationMixer(gltf.scene);
                     const modelActions = {};
+                    const additiveClips = {};
                     
                     for (const clip of this.gltfAnimations) {
-                        const action = mixer.clipAction(clip);
+                        let processedClip = clip;
+
+                        // Additive animations
+                        if (clip.name.includes('LookUp')) {
+                            processedClip = THREE.AnimationUtils.makeClipAdditive(clip);
+                            additiveClips[clip.name] = true;
+                        }
+
+                        const action = mixer.clipAction(processedClip);
                         modelActions[clip.name] = action;
-                        
+
+                        // Play base animations
                         if (clip.name.includes('Blinking') || clip.name.includes('Idle')) {
                             action.play();
                         }
@@ -107,7 +117,8 @@ export class SceneManager {
                     
                     this.animationsMap.set(modelName, {
                         mixer: mixer,
-                        actions: modelActions
+                        actions: modelActions,
+                        additiveClips: additiveClips
                     });
                 }
                 resolve(gltf);
@@ -318,10 +329,10 @@ export class SceneManager {
     moveCamera(actionName) {
         let startPosition, endPosition;
         if (actionName === 'LookUp') {
-            startPosition = this.camera.position.clone();
+            startPosition = new THREE.Vector3().copy(SCENE_SETTINGS.CAMERA.position);
             endPosition = new THREE.Vector3().copy(SCENE_SETTINGS.CAMERA.lookUpPosition);
         } else if (actionName === 'LookBack') {
-            startPosition = this.camera.position.clone();
+            startPosition = new THREE.Vector3().copy(SCENE_SETTINGS.CAMERA.lookUpPosition);
             endPosition = new THREE.Vector3().copy(SCENE_SETTINGS.CAMERA.position);
         }
 
@@ -358,16 +369,26 @@ export class SceneManager {
     }
 
     playAnimation(targetParts, actionName) {
+        this.moveCamera(actionName);
+
         targetParts.forEach(part => {
             const animationData = this.animationsMap.get(part);
             if (animationData) {
                 const action = animationData.actions[actionName];
+                
                 if (action) {
-                    action.setLoop( THREE.LoopOnce );
-                    action.clampWhenFinished = true;
-                    action.reset().play();
+                    Object.entries(animationData.actions).forEach(([name, otherAction]) => {
+                        if (animationData.additiveClips[name] && name !== actionName) {
+                            otherAction.stop();
+                        }
+                    });
 
-                    this.moveCamera(actionName);
+                    action.blending = THREE.NormalAnimationBlendMode;
+                    action.setLoop(THREE.LoopOnce);
+                    action.clampWhenFinished = true;
+                    action.setEffectiveWeight(1.0);
+
+                    action.reset().play();
                 }
             }
         });

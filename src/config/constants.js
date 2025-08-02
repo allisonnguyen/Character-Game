@@ -48,6 +48,7 @@ export const COLORS = {
     ],
     MOUTH: '#725147',
     BLUSH: [
+        '#f0f0f0',
         '#ffc5d3',
         '#fc6c85',
         '#ff007f',
@@ -107,7 +108,7 @@ export const SCENE_SETTINGS = {
   BACKGROUND: normalizeColor(COLORS.BASE),
   CAMERA: {
     position: { x: 0, y: 1, z: 5 },
-    lookUpPosition: { x: 2.5, y: 2.5, z: 4  },
+    lookUpPosition: { x: 4, y: 3.5, z: 2.5  },
     target: { x: 0, y: 0.75, z: 0 },
     fov: 45,
     near: 0.1,
