@@ -12,8 +12,6 @@ async function init() {
 
   sceneManager.setupScene(experienceContainer, experienceCanvas);
 
-  console.log(sceneManager.animationsMap);
-
   const uiManager = new UIManager(sceneManager);
   uiManager.init();
 

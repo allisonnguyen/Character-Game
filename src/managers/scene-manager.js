@@ -16,8 +16,10 @@ export class SceneManager {
         this.gltfAnimations = new THREE.AnimationClip;
         this.clock = new THREE.Clock();
 
+        /*
         this.mouse = new THREE.Vector2();
         this.setupMouseTracking();
+        */
 
         this.render = this.render.bind(this);   // Bind to SceneManager instance for passing to requestAnimationFrame
         this.initLoaders();
@@ -313,6 +315,42 @@ export class SceneManager {
         this.addModelToScene(styleName);
     }
 
+    moveCamera(actionName) {
+        let startPosition, endPosition;
+        if (actionName === 'LookUp') {
+            startPosition = this.camera.position.clone();
+            endPosition = new THREE.Vector3().copy(SCENE_SETTINGS.CAMERA.lookUpPosition);
+        } else if (actionName === 'LookBack') {
+            startPosition = this.camera.position.clone();
+            endPosition = new THREE.Vector3().copy(SCENE_SETTINGS.CAMERA.position);
+        }
+
+        const duration = 0.5;
+        const startTime = this.clock.getElapsedTime();
+        
+        const animateCamera = () => {
+            const currentTime = this.clock.getElapsedTime();
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Smooth camera movement
+            const easeProgress = progress < 0.5 
+                ? 2 * progress * progress 
+                : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+            
+            // Interpolate position
+            this.camera.position.lerpVectors(startPosition, endPosition, easeProgress);
+            this.controls.target.copy(SCENE_SETTINGS.CAMERA.target);
+            this.controls.update();
+            
+            if (progress < 1) {
+                requestAnimationFrame(animateCamera);
+            }
+        };
+        
+        animateCamera();
+    }
+
     resetCamera() {
         this.camera.position.copy(SCENE_SETTINGS.CAMERA.position);
         this.controls.target.copy(SCENE_SETTINGS.CAMERA.target);
@@ -328,11 +366,14 @@ export class SceneManager {
                     action.setLoop( THREE.LoopOnce );
                     action.clampWhenFinished = true;
                     action.reset().play();
+
+                    this.moveCamera(actionName);
                 }
             }
         });
     }
 
+    /*
     setupMouseTracking() {
         window.addEventListener('mousemove', (e) => {
             const mouseX = e.clientX;
@@ -344,6 +385,7 @@ export class SceneManager {
             const anchorY = rect.right + rect.height / 2;
 
             const angleDeg = this.angle(mouseX, mouseY, anchorX, anchorY);
+            console.log(angleDeg);
         })
     }
 
@@ -354,6 +396,7 @@ export class SceneManager {
         const deg = rad * 180 / Math.PI;
         return deg;
     }
+    */
 
     render() {
         const delta = this.clock.getDelta();

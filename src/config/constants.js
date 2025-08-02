@@ -107,6 +107,7 @@ export const SCENE_SETTINGS = {
   BACKGROUND: normalizeColor(COLORS.BASE),
   CAMERA: {
     position: { x: 0, y: 1, z: 5 },
+    lookUpPosition: { x: 2.5, y: 2.5, z: 4  },
     target: { x: 0, y: 0.75, z: 0 },
     fov: 45,
     near: 0.1,
@@ -181,4 +182,10 @@ export const FULL_BODY = [
   MODEL_PARTS.NOSE_TRIANGLE,
   MODEL_PARTS.NOSE_OVAL,
   MODEL_PARTS.NOSE_CUBE,
+  MODEL_CLOTHING.ASKIRT,
+  MODEL_CLOTHING.LSKIRT,
+  MODEL_CLOTHING.SHORTS,
+  MODEL_CLOTHING.PANTS,
+  MODEL_CLOTHING.TSHIRT,
+  MODEL_CLOTHING.YSHIRT,
 ]

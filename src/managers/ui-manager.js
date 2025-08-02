@@ -1,10 +1,9 @@
 // managers/ui-manager.js
-import { COLORS, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES, MODEL_PARTS, FULL_BODY, SWATCH_ICON_PATH } from '../config/constants';
+import { SWATCH_ICON_PATH, COLORS, MODEL_PARTS, FULL_BODY, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES } from '../config/constants';
 
 export class UIManager {
     constructor(sceneManager) {
         this.sceneManager = sceneManager;
-        this.activeSwatches = new Map();
     }
 
     init() {
@@ -29,12 +28,13 @@ export class UIManager {
 
                 const optionsType = button.dataset.options;
                 const targetPanel = document.querySelector(`.options-content[data-options="${optionsType}"]`);
-                if (targetPanel) {
-                    targetPanel.classList.add('active');
-                }
-
+                
                 if (optionsType === 'hair') {
                     this.sceneManager.playAnimation(FULL_BODY, 'LookUp');
+                }
+
+                if (targetPanel) {
+                    targetPanel.classList.add('active');
                 }
             });
         });
@@ -131,7 +131,6 @@ export class UIManager {
             swatch.addEventListener('click', () => {
                 swatches.forEach(s => s.classList.remove('active'));
                 swatch.classList.add('active');
-                this.activeSwatches.set(category, swatch.dataset.color);
                 this.sceneManager.updateModelColor(swatch.dataset.color, targetParts);
             });
         });
