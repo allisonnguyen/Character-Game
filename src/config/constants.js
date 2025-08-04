@@ -102,6 +102,18 @@ export const MOUTH_STYLES = {
     'mouth 3': MOUTH_3_PATH,
 }
 
+export const TOP_STYLES = {
+  'tshirt': '/media/tshirt.png',
+  'yshirt': '/media/yshirt.png',
+}
+
+export const BOTTOM_STYLES = {
+  'askirt': '/media/askirt.png',
+  'lskirt': '/media/lskirt.png',
+  'shorts': '/media/shorts.png',
+  'pants': '/media/pants.png',
+}
+
 export const SCENE_SETTINGS = {
   BACKGROUND: normalizeColor(COLORS.BASE),
   CAMERA: {
@@ -159,12 +171,12 @@ export const MODEL_PARTS = {
 };
 
 export const MODEL_CLOTHING = {
-  ASKIRT: "askirt",
-  LSKIRT: "lskirt",
-  SHORTS: "shorts",
-  PANTS: "pants",
-  TSHIRT: "tshirt",
-  YSHIRT: "yshirt",
+  ASKIRT: 'askirt',
+  LSKIRT: 'lskirt',
+  SHORTS: 'shorts',
+  PANTS: 'pants',
+  TSHIRT: 'tshirt',
+  YSHIRT: 'yshirt',
 }
 
 export const FULL_BODY = [

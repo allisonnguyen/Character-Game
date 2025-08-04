@@ -170,7 +170,9 @@ body,
 .skin-options,
 .eye-options,
 .hair-options,
-.face-options {
+.face-options,
+.top-options,
+.bottom-options {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -185,8 +187,6 @@ body,
     display: grid;
     grid-template-rows: 40% 60%;
     grid-template-columns: 100%;
-    width: 100%;
-    height: 100%;
 }
 
 .face-options {
@@ -194,8 +194,6 @@ body,
     display: grid;
     grid-template-rows: 60% 40%;
     grid-template-columns: 100%;
-    width: 100%;
-    height: 100%;
 }
 
 .nose-options {
@@ -210,18 +208,29 @@ body,
 .hair-colors,
 .nose-styles,
 .nose-colors,
-.mouth-styles {
+.mouth-styles,
+.top-styles,
+.bottom-styles {
     width: 100%;
     min-height: 0;
     overflow: hidden;
 }
 
 .hair-styles,
-.nose-styles,
-.mouth-styles {
+.nose-styles {
     grid-row: 1;
     display: flex;
     flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 3vw;
+}
+
+.top-styles,
+.bottom-styles {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: flex-start;
     gap: 3vw;
@@ -263,7 +272,9 @@ body,
 
 .hair-style,
 .nose-style,
-.mouth-style {
+.mouth-style,
+.top-style,
+.bottom-style {
     background: transparent;
     cursor: pointer;
     display: flex;
@@ -273,12 +284,19 @@ body,
     min-width: 0;
 }
 
-.hair-style {
+.hair-style,
+.top-style,
+.bottom-style {
     width: clamp(70px, 18vmin, 150px);
     height: clamp(70px, 18vmin, 150px);
     border-radius: 35%;
     border: 4px solid transparent;
     overflow: hidden;
+}
+
+.top-style,
+.bottom-style {
+    padding: 8px;
 }
 
 .nose-style,
@@ -313,12 +331,18 @@ body,
 .nose-style:hover svg,
 .nose-style.active svg,
 .mouth-style:hover svg,
-.mouth-style.active svg {
+.mouth-style.active svg,
+.top-style:hover img,
+.top-style.active img,
+.bottom-style:hover img,
+.bottom-style.active img {
     object-fit: contain;
     transform: scale(1.2);
 }
 
-.hair-style img {
+.hair-style img,
+.top-style img,
+.bottom-style img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -338,7 +362,9 @@ body,
 .hair-color.active,
 .nose-style.active,
 .nose-color.active,
-.mouth-style.active {
+.mouth-style.active,
+.top-style.active,
+.bottom-style.active {
     border-color: #00ced1;
 }
 
@@ -521,5 +547,17 @@ body,
         width: clamp(70px, 8vmin, 125px);
         height: clamp(70px, 8vmin, 125px);
         border-width: 5px;
+    }
+
+    .top-options,
+    .bottom-options {
+        padding-bottom: 5vw;
+    }
+
+    .top-style,
+    .bottom-style {
+        width: clamp(80px, 20vmin, 200px);
+        height: clamp(80px, 20vmin, 200px);
+        border-width: 8px;
     }
 }

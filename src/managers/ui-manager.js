@@ -1,5 +1,5 @@
 // managers/ui-manager.js
-import { SWATCH_ICON_PATH, COLORS, MODEL_PARTS, FULL_BODY, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES } from '../config/constants';
+import { SWATCH_ICON_PATH, COLORS, MODEL_PARTS, MODEL_CLOTHING, FULL_BODY, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES, TOP_STYLES, BOTTOM_STYLES } from '../config/constants';
 
 export class UIManager {
     constructor(sceneManager) {
@@ -12,6 +12,8 @@ export class UIManager {
         this.initStyleButtons('.hair-styles', HAIR_STYLES);
         this.initStyleButtons('.nose-styles', NOSE_STYLES);
         this.initStyleButtons('.mouth-styles', MOUTH_STYLES);
+        this.initStyleButtons('.top-styles', TOP_STYLES);
+        this.initStyleButtons('.bottom-styles', BOTTOM_STYLES);
         this.initControlButtons();
     }
 
@@ -80,6 +82,18 @@ export class UIManager {
             '.mouth-options',
             null,
             [MODEL_PARTS.MOUTH_1, MODEL_PARTS.MOUTH_2, MODEL_PARTS.MOUTH_3]
+        );
+
+        this.createStylePanel(
+            '.top-options',
+            null,
+            [MODEL_CLOTHING.TSHIRT, MODEL_CLOTHING.YSHIRT]
+        );
+
+        this.createStylePanel(
+            '.bottom-options',
+            null,
+            [MODEL_CLOTHING.ASKIRT, MODEL_CLOTHING.LSHIRT, MODEL_CLOTHING.SHORTS, MODEL_CLOTHING.PANTS]
         );
     }
 
@@ -187,7 +201,7 @@ export class UIManager {
         const button = document.createElement('button');
         button.className = buttonClass;
 
-        if (buttonClass.includes('hair')) {
+        if (buttonClass.includes('hair') || buttonClass.includes('top') || buttonClass.includes('bottom')) {
             const image = document.createElement('img');
             image.src = path;
             image.alt = style;
@@ -219,6 +233,14 @@ export class UIManager {
 
             if (buttonClass.includes('mouth')) {
                 this.sceneManager.setStyle(MOUTH_STYLES, style);
+            }
+
+            if (buttonClass.includes('top')) {
+                this.sceneManager.setStyle(TOP_STYLES, style);
+            }
+
+            if (buttonClass.includes('bottom')) {
+                this.sceneManager.setStyle(BOTTOM_STYLES, style);
             }
         })
         
