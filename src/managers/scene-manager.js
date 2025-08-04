@@ -263,7 +263,7 @@ export class SceneManager {
         });
     }
 
-    createMouthMask(styleName) {
+    createMask(targetPart, styleName) {
         // Create mouth mask as skinned mesh using body skeleton
         const textureName = styleName.replace(' ', '_') + '_mask';
         const bodyModel = this.models.get(MODEL_PARTS.BODY);
@@ -284,7 +284,18 @@ export class SceneManager {
             return null;
         }
 
-        // Create mouth material
+        if (targetPart === 'mouth') {
+            const mouthMesh = this.createMouthMesh(textureName, bodyMesh, skeleton);
+
+            const mouthGroup = new THREE.Group();
+            mouthGroup.add(mouthMesh);
+            this.models.set(styleName, mouthGroup);
+            
+            return mouthGroup;
+        }
+    }
+
+    createMouthMesh(textureName, bodyMesh, skeleton) {
         const mouthMaterial = new THREE.MeshStandardMaterial({
             map: this.textures.get(textureName),
             alphaMap: this.textures.get(textureName),
@@ -304,11 +315,7 @@ export class SceneManager {
 
         mouthMesh.bind(skeleton, bodyMesh.bindMatrix);
 
-        const mouthGroup = new THREE.Group();
-        mouthGroup.add(mouthMesh);
-        this.models.set(styleName, mouthGroup);
-        
-        return mouthGroup;
+        return mouthMesh;
     }
 
     setStyle(category, styleName) {
@@ -319,7 +326,7 @@ export class SceneManager {
         if (styleName.toLowerCase().includes("mouth")) {
             let mouthMesh = this.models.get(styleName);
             if (!mouthMesh) {
-                mouthMesh = this.createMouthMask(styleName);
+                mouthMesh = this.createMask("mouth", styleName);
             }
         }
         

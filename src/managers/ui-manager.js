@@ -72,7 +72,7 @@ export class UIManager {
 
         this.createStylePanel(
             '.nose-options',
-            COLORS.BLUSH,
+            COLORS.NOSE,
             [MODEL_PARTS.NOSE_TRIANGLE, MODEL_PARTS.NOSE_OVAL, MODEL_PARTS.NOSE_CUBE]
         );
 

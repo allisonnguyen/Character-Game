@@ -77,9 +77,9 @@ body,
 
 #customization-panel {
     display: grid;
-    grid-template-rows: 25% 75%;
+    grid-template-rows: 30% 70%;
     height: 100%;
-    padding: 15px 20px;
+    padding: 15px 25px;
     background-color: #ffffff;
     overflow: hidden;
 }
@@ -135,7 +135,7 @@ body,
 }
 
 .options-panel {
-    padding-bottom: 4vw;
+    padding-bottom: 7vw;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -277,7 +277,8 @@ body,
     width: clamp(70px, 18vmin, 150px);
     height: clamp(70px, 18vmin, 150px);
     border-radius: 35%;
-    border: 5px solid transparent;
+    border: 4px solid transparent;
+    overflow: hidden;
 }
 
 .nose-style,
@@ -352,7 +353,7 @@ body,
     }
 
     .options-panel {
-        padding-bottom: 0;
+        padding-bottom: 1vw;
     }
 
     .category-btn {
@@ -362,7 +363,7 @@ body,
 
     .hair-options,
     .face-options {
-        padding-top: 4vw;
+        padding-top: 2vw;
     }
 
     .hair-colors,
@@ -393,7 +394,7 @@ body,
     }
 
     #customization-panel {
-        padding: 20px 30px;
+        padding: 20px 40px;
     }
 
     .category-btn {
@@ -406,6 +407,10 @@ body,
         width: clamp(80px, 15vmin, 200px);
         height: clamp(80px, 15vmin, 200px);
         border-width: 8px;
+    }
+
+    .hair-options {
+        padding-top: 3vw;
     }
 
     .hair-style {
@@ -439,7 +444,7 @@ body,
     }
 
     .options-panel {
-        padding-bottom: 0;
+        padding-bottom: 3vw;
     }
 
     .category-btn {
@@ -479,11 +484,11 @@ body,
 
 @media (min-width: 1024px) {
     #customization-panel {
-        padding: 20px 40px;
+        padding: 20px 50px;
     }
 
     .options-panel {
-        padding-bottom: 2vw;
+        padding-bottom: 5vw;
     }
 
     .skin-option,
@@ -493,13 +498,10 @@ body,
         border-width: 8px;
     }
 
-    .hair-options {
-        padding-top: 3vw;
-    }
-
     .hair-style {
         width: clamp(120px, 18vmin, 275px);
         height: clamp(120px, 18vmin, 275px);
+        border: 7px solid transparent;
     }
 
     .nose-style,

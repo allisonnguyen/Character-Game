@@ -46,22 +46,20 @@ export const COLORS = {
         '#dd98cf',
         '#f7aebd',
     ],
-    MOUTH: '#725147',
-    BLUSH: [
+    NOSE: [
         '#f0f0f0',
         '#ffc5d3',
         '#fc6c85',
         '#ff007f',
         '#a94064',
-    ]
+    ],
+    MOUTH: '#725147'
 };
 
 export const TEXTURE_PATHS = [
     'textures/mouth_1_mask.png',
     'textures/mouth_2_mask.png',
     'textures/mouth_3_mask.png',
-    'textures/blush1_mask.png',
-    'textures/blush2_mask.png',
 ];
 
 export const MODEL_PATHS = [
@@ -158,8 +156,6 @@ export const MODEL_PARTS = {
   MOUTH_1: 'mouth 1',
   MOUTH_2: 'mouth 2',
   MOUTH_3: 'mouth 3',
-  BLUSH_1: 'blush 1',
-  BLUSH_2: 'blush 2',
 };
 
 export const MODEL_CLOTHING = {
