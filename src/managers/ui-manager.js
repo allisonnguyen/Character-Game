@@ -1,5 +1,6 @@
 // managers/ui-manager.js
 import { SWATCH_ICON_PATH, COLORS, MODEL_PARTS, MODEL_CLOTHING, FULL_BODY, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES, TOP_STYLES, BOTTOM_STYLES } from '../config/constants';
+import { Howl } from 'howler';
 
 export class UIManager {
     constructor(sceneManager) {
@@ -35,7 +36,7 @@ export class UIManager {
 
                 const optionsType = button.dataset.options;
                 const targetPanel = document.querySelector(`.options-content[data-options="${optionsType}"]`);
-                
+                 
                 if (optionsType === 'hair') {
                     if (currentCategory !== 'hair') {
                         this.sceneManager.playAnimation(FULL_BODY, 'LookUp');

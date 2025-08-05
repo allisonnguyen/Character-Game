@@ -21,52 +21,129 @@ export class SceneManager {
         this.setupMouseTracking();
         */
 
-        this.render = this.render.bind(this);   // Bind to SceneManager instance for passing to requestAnimationFrame
+        this.loadingAnimation = {
+            active: false,
+            angle: 0,
+            speed: 0.1,
+            element: null
+        };
+        this.loadingManager = new THREE.LoadingManager(
+            () => this.onLoad(),
+            (url, itemsLoaded, itemsTotal) => this.onProgress(url, itemsLoaded, itemsTotal),
+            (url) => {
+                console.error('Error loading:', url);
+                this.stopLoadingAnimation();
+            }
+        );
+
+        this.render = this.render.bind(this);                                                           // Bind to SceneManager instance for passing to requestAnimationFrame
         this.initLoaders();
     }
 
+    /**  -------------------------- Load Models and Textures -------------------------- */
+
     initLoaders() {
-        this.textureLoader = new THREE.TextureLoader();
+        this.textureLoader = new THREE.TextureLoader(this.loadingManager);
         
         this.dracoLoader = new DRACOLoader();
         this.dracoLoader.setDecoderPath("/draco/");
         
-        this.gtfLoader = new GLTFLoader();
+        this.gtfLoader = new GLTFLoader(this.loadingManager);
         this.gtfLoader.setDRACOLoader(this.dracoLoader);
+
+        this.loadingAnimation.element = document.querySelector('.loader');
     }
 
-    async loadAssets(texturePaths, modelPaths) {
-        try {
-            const texturePromises = texturePaths.map(path => this.loadTexture(path));
-            const modelPromises = modelPaths.map(path => this.loadModel(path));
+    startLoadingAnimation() {
+        this.loadingAnimation.active = true;
+        this.loadingAnimation.angle = 0;
+        this.animateLoader();
+    }
+
+    stopLoadingAnimation() {
+        this.loadingAnimation.active = false;
+    }
+
+    animateLoader() {
+        if (!this.loadingAnimation.active) return;
+        
+        this.loadingAnimation.angle += this.loadingAnimation.speed;
+        
+        const cube = this.loadingAnimation.element;
+        const angle = this.loadingAnimation.angle;
+        
+        if (angle % Math.PI < Math.PI/2) {
+            cube.style.transform = `rotateY(${angle}rad)`;
+        } else {
+            cube.style.transform = `rotateY(${angle}rad) rotateX(${angle}rad)`;
+        }
+        
+        requestAnimationFrame(() => this.animateLoader());
+    }
+
+    onProgress(url, itemsLoaded, itemsTotal) {
+        if (!this.loadingAnimation.active) {
+            this.startLoadingAnimation();
+        }
+        
+        /*
+        const percent = Math.round((itemsLoaded / itemsTotal) * 100);
+        console.log(`Loading ${percent}%: ${url}`);
+        */
+    }
+
+    onLoad() {
+        // Add default models
+        this.addModelToScene(MODEL_PARTS.BODY);
+        this.addModelToScene(MODEL_PARTS.LEFT_IRIS);
+        this.addModelToScene(MODEL_PARTS.LEFT_PUPIL);
+        this.addModelToScene(MODEL_PARTS.RIGHT_IRIS);
+        this.addModelToScene(MODEL_PARTS.RIGHT_PUPIL);
+        this.addModelToScene(MODEL_PARTS.EYEBROWS);
+        this.addModelToScene(MODEL_PARTS.NOSE_TRIANGLE);
+        this.addModelToScene(MODEL_CLOTHING.TSHIRT);
+        this.addModelToScene(MODEL_CLOTHING.SHORTS);
+
+        this.stopLoadingAnimation();
+        
+        this.render();
+
+        const loadingElement = document.getElementById('js-loader');
+        const mainContent = document.getElementById('main-content');
+        
+        if (loadingElement && mainContent) {
+            loadingElement.style.opacity = '0';
+            loadingElement.style.transition = 'opacity 0.5s ease-out';
             
-            await Promise.all([...modelPromises, ...texturePromises]);
-        } catch(err) {
-            console.error("Error loading assets: ", err);
-            throw err;
+            loadingElement.addEventListener('transitionend', () => {
+                loadingElement.style.display = 'none';
+            }, { once: true });
         }
     }
 
+    loadAssets(texturePaths, modelPaths) {
+        this.startLoadingAnimation();
+        
+        texturePaths.forEach(path => this.loadTexture(path));
+        modelPaths.forEach(path => this.loadModel(path));
+    }
+
     loadTexture(path) {
-        return new Promise((resolve, reject) => {
-            this.textureLoader.load(
-              path,
-              (texture) => {
-                const name = path.split('/').pop().split('.')[0];
-                texture.flipY = false;
-                texture.colorSpace = THREE.SRGBColorSpace;
-                this.textures.set(name, texture);
-                resolve(texture);
-              },
-              undefined,
-              (error) => reject(error)
-            );
-        });
+        this.textureLoader.load(
+            path,
+            (texture) => {
+            const name = path.split('/').pop().split('.')[0];
+            texture.flipY = false;
+            texture.colorSpace = THREE.SRGBColorSpace;
+            this.textures.set(name, texture);
+            },
+            undefined,
+            (error) => console.error('Texture load error:', error)
+        );
     }
 
     loadModel(path) {
-        return new Promise((resolve, reject) => {
-            this.gtfLoader.load(
+        this.gtfLoader.load(
             path,
             (gltf) => {
                 const modelName = path.split('/').pop().replace('.glb', '');
@@ -121,13 +198,13 @@ export class SceneManager {
                         additiveClips: additiveClips
                     });
                 }
-                resolve(gltf);
             },
             undefined,
-            (error) => reject(error)
-            );
-        });
+            (error) => console.error('Model load error:', error)
+        );
     }
+
+    /**  -------------------------------------- Scene -------------------------------------- */
 
     setupScene(experienceContainer, experienceCanvas) {
         this.scene.background = new THREE.Color(normalizeColor(COLORS.BASE));
@@ -208,17 +285,6 @@ export class SceneManager {
         this.controls.maxDistance = 10;
         this.controls.enablePan = false;
 
-        // Add Default Models
-        this.addModelToScene(MODEL_PARTS.BODY);
-        this.addModelToScene(MODEL_PARTS.LEFT_IRIS);
-        this.addModelToScene(MODEL_PARTS.LEFT_PUPIL);
-        this.addModelToScene(MODEL_PARTS.RIGHT_IRIS);
-        this.addModelToScene(MODEL_PARTS.RIGHT_PUPIL);
-        this.addModelToScene(MODEL_PARTS.EYEBROWS);
-        this.addModelToScene(MODEL_PARTS.NOSE_TRIANGLE);
-        this.addModelToScene(MODEL_CLOTHING.TSHIRT);
-        this.addModelToScene(MODEL_CLOTHING.SHORTS);
-
         // Resize
         window.addEventListener("resize", () => {
             this.sizes.width = experienceContainer.clientWidth;
@@ -261,6 +327,21 @@ export class SceneManager {
                 });
             }
         });
+    }
+
+    setStyle(category, styleName) {
+        Object.keys(category).forEach(style => {
+            this.removeModelFromScene(style);
+        })
+
+        if (styleName.toLowerCase().includes("mouth")) {
+            let mouthMesh = this.models.get(styleName);
+            if (!mouthMesh) {
+                mouthMesh = this.createMask("mouth", styleName);
+            }
+        }
+        
+        this.addModelToScene(styleName);
     }
 
     createMask(targetPart, styleName) {
@@ -318,20 +399,32 @@ export class SceneManager {
         return mouthMesh;
     }
 
-    setStyle(category, styleName) {
-        Object.keys(category).forEach(style => {
-            this.removeModelFromScene(style);
-        })
+    /*
+    setupMouseTracking() {
+        window.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
 
-        if (styleName.toLowerCase().includes("mouth")) {
-            let mouthMesh = this.models.get(styleName);
-            if (!mouthMesh) {
-                mouthMesh = this.createMask("mouth", styleName);
-            }
-        }
-        
-        this.addModelToScene(styleName);
+            const anchor = document.getElementById('experience-container');
+            const rect = anchor.getBoundingClientRect();
+            const anchorX = rect.left + rect.width / 2;
+            const anchorY = rect.right + rect.height / 2;
+
+            const angleDeg = this.angle(mouseX, mouseY, anchorX, anchorY);
+            console.log(angleDeg);
+        })
     }
+
+    angle(cx, cy, ex, ey) {
+        const dy = ey - cy;
+        const dx = ex - cx;
+        const rad = Math.atan2(dy, dx);
+        const deg = rad * 180 / Math.PI;
+        return deg;
+    }
+    */
+
+    /**  ---------------------------------- Camera ---------------------------------- */
 
     moveCamera(actionName) {
         let startPosition, endPosition;
@@ -400,31 +493,6 @@ export class SceneManager {
             }
         });
     }
-
-    /*
-    setupMouseTracking() {
-        window.addEventListener('mousemove', (e) => {
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
-
-            const anchor = document.getElementById('experience-container');
-            const rect = anchor.getBoundingClientRect();
-            const anchorX = rect.left + rect.width / 2;
-            const anchorY = rect.right + rect.height / 2;
-
-            const angleDeg = this.angle(mouseX, mouseY, anchorX, anchorY);
-            console.log(angleDeg);
-        })
-    }
-
-    angle(cx, cy, ex, ey) {
-        const dy = ey - cy;
-        const dx = ex - cx;
-        const rad = Math.atan2(dy, dx);
-        const deg = rad * 180 / Math.PI;
-        return deg;
-    }
-    */
 
     render() {
         const delta = this.clock.getDelta();

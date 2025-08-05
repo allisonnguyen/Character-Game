@@ -27,6 +27,37 @@ body,
     position: relative;
 }
 
+.loading {
+    position: fixed;
+    z-index: 50;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: #f1f1f1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader {
+    width: 100px;
+    height: 100px;
+    position: relative;
+}
+
+.loader::before {
+    content: "";
+    position: absolute;
+    left: 25px;
+    top: 25px;
+    width: 50px;
+    height: 50px;
+    background-color: #00ced1;
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
 #experience-container {
     position: relative;
     height: 100%;
@@ -369,6 +400,8 @@ body,
 }
 
 /* Button animations */
+#settings, 
+#reset-view,
 .skin-option, 
 .eye-option, 
 .hair-style, 
@@ -381,6 +414,8 @@ body,
   transition: transform 0.3s ease;
 }
 
+#settings:active, 
+#reset-view:active,
 .skin-option:active, 
 .eye-option:active, 
 .hair-style:active, 
@@ -390,7 +425,7 @@ body,
 .bottom-style:active, 
 .hair-color:active, 
 .nose-color:active {
-  animation: buttonClick 0.5s ease;
+    animation: buttonClick 0.5s ease;
 }
 
 /* Preserve existing transforms */
