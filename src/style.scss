@@ -1,3 +1,6 @@
+@use "./styles/fonts.scss";
+@use "./styles/variables.scss" as vars;
+
 * {
     margin: 0;
     padding: 0;
@@ -5,7 +8,6 @@
 }
 
 :root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -27,35 +29,92 @@ body,
     position: relative;
 }
 
-.loading {
+#loading-screen {
     position: fixed;
+    @include vars.centered;
     z-index: 50;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
-    background: #f1f1f1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background: vars.$color-accent;
 }
 
-.loader {
+#loader {
     width: 100px;
     height: 100px;
     position: relative;
+    &::before {
+        content: "";
+        position: absolute;
+        left: 25px;
+        top: 25px;
+        width: 50px;
+        height: 50px;
+        background-color: vars.$color-primary;
+        will-change: transform;
+        animation: flip 1.5s infinite ease-in-out;
+    }
 }
 
-.loader::before {
-    content: "";
-    position: absolute;
-    left: 25px;
-    top: 25px;
-    width: 50px;
-    height: 50px;
-    background-color: #00ced1;
-    transform-style: preserve-3d;
+#sound-options {
+    left: 50%;
+    top: 50%;
+    position: fixed;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    padding: 70px 80px;
+    max-width: 90vw;
+    max-height: 90vh;
+    width: auto;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('/media/dialogue_box.png');
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        background-position: center;
+        z-index: -1;    
+    }
+
+    h2 {
+        font-family: 'FOT Seurat Pro';
+        font-size: clamp(16px, 2vw, 24px);
+        color: vars.$color-secondary;
+        overflow: hidden;
+        white-space: nowrap;
+        animation: typing 2s steps(51) paused;
+    }
+}
+
+.sound-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.sound-button {
+    border: transparent;
+    border-radius: 50px;
+    background: transparent;
+    padding: 20px 40px;
+    cursor: pointer;
+    font-family: 'FOT Seurat Pro';
+    color: vars.$color-secondary;
+    transform-origin: center;
     will-change: transform;
+
+    &:hover {
+        background: vars.$color-primary;
+    }
 }
 
 #experience-container {
@@ -69,18 +128,16 @@ body,
     left: 0;
     width: 100%;
     height: 100%;
-    display: block;
+    display: flex;
 }
 
 #settings, #reset-view {
     position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include vars.centered;
     width: clamp(40px, 6vmin, 70px);
     height: clamp(40px, 6vmin, 70px);
-    background-color: #ffffff;
-    color: #828282;
+    background-color: vars.$color-white;
+    color: vars.$color-gray;
     border: none;
     border-radius: 50%;
     overflow: hidden;
@@ -89,21 +146,21 @@ body,
 #settings {
     top: 20px;
     left: 20px;
-}
 
-#settings svg {
-    width: 75%;
-    height: 75%;
+    svg {
+        width: 75%;
+        height: 75%;
+    }
 }
 
 #reset-view {
     bottom: 20px;
     right: 20px;
-}
 
-#reset-view svg {
-    width: 60%;
-    height: 60%;
+    svg {
+        width: 60%;
+        height: 60%;  
+    }
 }
 
 #customization-panel {
@@ -111,7 +168,7 @@ body,
     grid-template-rows: 30% 70%;
     height: 100%;
     padding: 15px 25px;
-    background-color: #ffffff;
+    background-color: vars.$color-white;
     overflow: hidden;
 }
 
@@ -121,43 +178,39 @@ body,
 }
 
 .category-buttons {
-    display: flex;
+    @include vars.centered;
     flex-direction: row;
-    justify-content: center;
-    align-items: center;
     width: 100%;
     height: 100%;
 }
 
 .category-btn {
+    @include vars.centered;
     z-index: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     width: clamp(50px, 12vmin, 70px);
     height: clamp(50px, 12vmin, 70px);
     margin: 0 -2px;
-    background-color: #444;
+    background-color: vars.$color-dark-gray;
     border: none;
     border-radius: 50%;
-    color: #828282;
+    color: vars.$color-gray;
     cursor: pointer;
     overflow: hidden;
-}
 
-.category-btn svg {
-    width: 40%;
-    height: 40%;
-}
+    svg {
+        width: 40%;
+        height: 40%;
+    }
 
-.category-btn.active {
-    z-index: 3;
-    color: white;
-}
+    &.active {
+        z-index: 3;
+        color: vars.$color-white;
 
-.category-btn.active svg {
-    width: 60%;
-    height: 60%;
+        svg {
+            width: 60%;
+            height: 60%;
+        }
+    }
 }
 
 .options-panel-container {
@@ -166,14 +219,12 @@ body,
 }
 
 .options-panel {
-    padding-bottom: 7vw;
-    display: flex;
+    @include vars.centered;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     width: 100%;
     height: 100%;
     overflow: hidden;
+    padding-bottom: 7vw;
 }
 
 .options-content {
@@ -181,18 +232,15 @@ body,
     width: 100%;
     overflow: hidden;
     display: none;
-}
 
-.options-content.active {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    &.active {
+        @include vars.centered;
+        flex-direction: column;
+    }
 }
 
 .options-row {
-    display: flex;
-    justify-content: center;
+    @include vars.centered;
     flex-wrap: nowrap;
     gap: 1vw;
     width: 100%;
@@ -204,10 +252,8 @@ body,
 .face-options,
 .top-options,
 .bottom-options {
-    display: flex;
+    @include vars.centered;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     min-height: 0;
     width: 100%;
     height: 100%;
@@ -271,34 +317,31 @@ body,
 .nose-colors,
 .mouth-styles {
     grid-row: 2;
-    display: flex;
+    @include vars.centered;
     flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
     gap: 10px;
 }
 
 .skin-option,
 .eye-option {
+    @include vars.centered;
     width: clamp(70px, 18vmin, 90px);
     height: clamp(70px, 18vmin, 90px);
     border-radius: 50%;
     border: 4px solid transparent;
-    background: #ffffff;
+    background: vars.$color-white;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     padding: 5px;
     flex-shrink: 0;
     min-width: 0;
-}
 
-.skin-option:hover,
-.eye-option:hover,
-.hair-color:hover,
-.nose-color:hover {
-    border-color: #ccc;
+    &:hover {
+        border-color: vars.$color-light-gray;
+    }
+
+    &.active {
+        border-color: vars.$color-primary;
+    }
 }
 
 .hair-style,
@@ -306,13 +349,15 @@ body,
 .mouth-style,
 .top-style,
 .bottom-style {
-    background: #ffffff;
+    @include vars.centered;
+    background: vars.$color-white;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     flex-shrink: 0;
     min-width: 0;
+
+    &.active {
+        border-color: vars.$color-primary;
+    }
 }
 
 .hair-style,
@@ -323,6 +368,10 @@ body,
     border-radius: 35%;
     border: 4px solid transparent;
     overflow: hidden;
+
+    &.active {
+        background: vars.$color-primary;
+    }
 }
 
 .top-style,
@@ -335,73 +384,64 @@ body,
     width: clamp(70px, 20vmin, 200px);
     height: clamp(50px, 17vmin, 150px);
     border: 4px solid transparent;
-    border-radius: 40%;
-}
-
-.hair-style.active {
-    background: #00ced1;
+    border-radius: 50px;
 }
 
 .hair-color,
 .nose-color {
+    @include vars.centered;
     width: clamp(25px, 9vmin, 60px);
     height: clamp(25px, 9vmin, 60px);
     border-radius: 50%;
     border: 3px solid transparent;
-    background: #ffffff;
+    background: vars.$color-white;
     cursor: pointer;
     padding: 3px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     flex-shrink: 0;
+
+    &:hover {
+        border-color: vars.$color-light-gray;
+    }
+
+    &.active {
+        border-color: vars.$color-primary;
+    }
 }
 
-.hair-style:hover img,
-.hair-style.active img,
-.nose-style:hover svg,
-.nose-style.active svg,
-.mouth-style:hover svg,
-.mouth-style.active svg,
-.top-style:hover img,
-.top-style.active img,
-.bottom-style:hover img,
-.bottom-style.active img {
-    object-fit: contain;
-    transform: scale(1.2);
+.hair-style,
+.top-style,
+.bottom-style {
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+
+        &:hover, &.active {
+            object-fit: contain;
+            transform: scale(1.2);
+        }
+    }
 }
 
-.hair-style img,
-.top-style img,
-.bottom-style img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
+.nose-style,
+.mouth-style {
+    svg {
+        width: 60%;
+        height: 60%;
+        object-fit: cover;
+        object-position: center;
+
+        &:hover, &.active {
+            transform: scale(1.2);
+        }
+    }
 }
 
-.nose-style svg,
-.mouth-style svg {
-    width: 60%;
-    height: 60%;
-    object-fit: cover;
-    object-position: center;
-}
-
-.skin-option.active,
-.eye-option.active,
-.hair-color.active,
-.nose-style.active,
-.nose-color.active,
-.mouth-style.active,
-.top-style.active,
-.bottom-style.active {
-    border-color: #00ced1;
-}
-
-/* Button animations */
+// Button animations
 #settings, 
 #reset-view,
+.sound-button,
 .skin-option, 
 .eye-option, 
 .hair-style, 
@@ -411,37 +451,11 @@ body,
 .bottom-style, 
 .hair-color, 
 .nose-color {
-  transition: transform 0.3s ease;
-}
+    transition: transform 0.3s ease;
 
-#settings:active, 
-#reset-view:active,
-.skin-option:active, 
-.eye-option:active, 
-.hair-style:active, 
-.nose-style:active, 
-.mouth-style:active, 
-.top-style:active, 
-.bottom-style:active, 
-.hair-color:active, 
-.nose-color:active {
-    animation: buttonClick 0.5s ease;
-}
-
-/* Preserve existing transforms */
-@keyframes buttonClick {
-  0% {
-    transform: scale(var(--current-scale, 1));
-  }
-  30% {
-    transform: scale(calc(var(--current-scale, 1) * 0.92));
-  }
-  70% {
-    transform: scale(calc(var(--current-scale, 1) * 0.96));
-  }
-  100% {
-    transform: scale(var(--current-scale, 1));
-  }
+    &:active {
+        animation: buttonClick 0.5s ease;
+    }
 }
 
 /* Responsive design*/
@@ -488,6 +502,13 @@ body,
     .nose-color {
         width: clamp(30px, 10vmin, 60px);
         height: clamp(30px, 10vmin, 60px);
+    }
+}
+
+@media (max-width: 480px) {
+    #sound-options h2 {
+        white-space: normal;
+        animation: none;
     }
 }
 
@@ -609,8 +630,8 @@ body,
 
     .nose-style,
     .mouth-style {
-        width: clamp(100px, 20vmin, 170px);
-        height: clamp(80px, 17vmin, 150px);
+        width: clamp(100px, 17vmin, 170px);
+        height: clamp(80px, 15vmin, 150px);
         border-width: 7px;
     }
 

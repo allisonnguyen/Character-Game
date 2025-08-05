@@ -22,14 +22,11 @@ export class SceneManager {
         */
 
         this.loadingAnimation = {
-            active: false,
-            angle: 0,
-            speed: 0.1,
             element: null
         };
         this.loadingManager = new THREE.LoadingManager(
             () => this.onLoad(),
-            (url, itemsLoaded, itemsTotal) => this.onProgress(url, itemsLoaded, itemsTotal),
+            () => this.onProgress(),
             (url) => {
                 console.error('Error loading:', url);
                 this.stopLoadingAnimation();
@@ -40,56 +37,32 @@ export class SceneManager {
         this.initLoaders();
     }
 
-    /**  -------------------------- Load Models and Textures -------------------------- */
-
-    initLoaders() {
-        this.textureLoader = new THREE.TextureLoader(this.loadingManager);
-        
-        this.dracoLoader = new DRACOLoader();
-        this.dracoLoader.setDecoderPath("/draco/");
-        
-        this.gtfLoader = new GLTFLoader(this.loadingManager);
-        this.gtfLoader.setDRACOLoader(this.dracoLoader);
-
-        this.loadingAnimation.element = document.querySelector('.loader');
-    }
+    /**  -------------------------- Loading Screen -------------------------- */
 
     startLoadingAnimation() {
-        this.loadingAnimation.active = true;
-        this.loadingAnimation.angle = 0;
-        this.animateLoader();
+        const loader = this.loadingAnimation.element;
+        if (loader) {
+            loader.style.display = 'flex';
+            loader.style.opacity = '1';
+        }
     }
 
     stopLoadingAnimation() {
-        this.loadingAnimation.active = false;
-    }
-
-    animateLoader() {
-        if (!this.loadingAnimation.active) return;
-        
-        this.loadingAnimation.angle += this.loadingAnimation.speed;
-        
-        const cube = this.loadingAnimation.element;
-        const angle = this.loadingAnimation.angle;
-        
-        if (angle % Math.PI < Math.PI/2) {
-            cube.style.transform = `rotateY(${angle}rad)`;
-        } else {
-            cube.style.transform = `rotateY(${angle}rad) rotateX(${angle}rad)`;
+        const loader = this.loadingAnimation.element;
+        if (loader) {
+            loader.style.opacity = '0';
+            loader.style.transition = 'opacity 0.5s ease-out';
+            
+            loader.addEventListener('transitionend', () => {
+                loader.style.display = 'none';
+            }, { once: true });
         }
-        
-        requestAnimationFrame(() => this.animateLoader());
     }
 
-    onProgress(url, itemsLoaded, itemsTotal) {
-        if (!this.loadingAnimation.active) {
+    onProgress() {
+        if (this.loadingAnimation.element) {
             this.startLoadingAnimation();
         }
-        
-        /*
-        const percent = Math.round((itemsLoaded / itemsTotal) * 100);
-        console.log(`Loading ${percent}%: ${url}`);
-        */
     }
 
     onLoad() {
@@ -105,10 +78,92 @@ export class SceneManager {
         this.addModelToScene(MODEL_CLOTHING.SHORTS);
 
         this.stopLoadingAnimation();
-        
         this.render();
+        this.showSoundOptions();
+    }
 
-        const loadingElement = document.getElementById('js-loader');
+    showSoundOptions() {
+        const loadingElement = document.getElementById('loader'); 
+        const soundOptions = document.getElementById('sound-options');
+        const textElement = document.querySelector('h2');
+        const enableSoundBtn = document.getElementById('enable-sound');
+        const disableSoundBtn = document.getElementById('disable-sound');
+        
+        if (loadingElement && soundOptions && textElement && enableSoundBtn && disableSoundBtn) {
+            const isSmallScreen = window.innerWidth <= 480;
+            const animationDuration = isSmallScreen ? '0s' : '2s';
+
+            // Show sound options container
+            soundOptions.style.display = 'flex';
+            soundOptions.style.opacity = '0';
+            soundOptions.style.transition = 'opacity 0.5s ease-in';
+            
+            soundOptions.offsetHeight;
+            
+            // Fade loading element out
+            loadingElement.style.opacity = '0';
+            loadingElement.style.transition = 'opacity 0.5s ease-out';
+
+            // Hide sound buttons
+            enableSoundBtn.style.opacity = '0';
+            enableSoundBtn.style.transform = 'scale(0.5)';
+            enableSoundBtn.style.transition = 'none';
+            
+            disableSoundBtn.style.opacity = '0';
+            disableSoundBtn.style.transform = 'scale(0.5)';
+            disableSoundBtn.style.transition = 'none';
+            
+            // After loading element
+            loadingElement.addEventListener('transitionend', () => {
+                loadingElement.style.display = 'none';
+
+                soundOptions.style.opacity = '1';
+
+                if (isSmallScreen) {
+                    textElement.style.animation = 'none';
+                    textElement.style.whiteSpace = 'normal';
+                    
+                    enableSoundBtn.style.transition = 'transform 0.3s ease-out';
+                    enableSoundBtn.style.opacity = '1';
+                    enableSoundBtn.style.transform = 'scale(1)';
+                    
+                    disableSoundBtn.style.transition = 'transform 0.3s ease-out';
+                    disableSoundBtn.style.opacity = '1';
+                    disableSoundBtn.style.transform = 'scale(1)';
+                } else {
+                    // Play text animation
+                    textElement.style.animationPlayState = 'running';
+                    textElement.addEventListener('animationend', () => {
+                        setTimeout(() => {
+                            enableSoundBtn.style.transition = 'transform 0.2s';
+                            enableSoundBtn.style.opacity = '1';
+                            enableSoundBtn.style.transitionTimingFunction = 'cubic-bezier(0.64, 0.57, 0.67, 1.53)';
+                            enableSoundBtn.style.transform = 'scale(1)';
+                        }, 150);
+
+                        setTimeout(() => {
+                            disableSoundBtn.style.transition = 'transform 0.2s';
+                            disableSoundBtn.style.opacity = '1';
+                            disableSoundBtn.style.transitionTimingFunction = 'cubic-bezier(0.64, 0.57, 0.67, 1.53)';
+                            disableSoundBtn.style.transform = 'scale(1)';
+                        }, 450);
+                    }, { once: true })
+                }
+                enableSoundBtn.addEventListener('click', () => {
+                    this.handleSoundChoice(true);
+                });
+                    
+                disableSoundBtn.addEventListener('click', () => {
+                    this.handleSoundChoice(false);
+                });
+            }, { once: true });
+        }
+    }
+
+    handleSoundChoice(enableSound) {
+        localStorage.setItem('soundEnabled', enableSound);
+
+        const loadingElement = document.getElementById('loading-screen');
         const mainContent = document.getElementById('main-content');
         
         if (loadingElement && mainContent) {
@@ -118,12 +173,25 @@ export class SceneManager {
             loadingElement.addEventListener('transitionend', () => {
                 loadingElement.style.display = 'none';
             }, { once: true });
-        }
+        } 
     }
 
-    loadAssets(texturePaths, modelPaths) {
-        this.startLoadingAnimation();
+    /**  -------------------------- Load Models and Textures -------------------------- */
+
+    initLoaders() {
+        this.textureLoader = new THREE.TextureLoader(this.loadingManager);
         
+        this.dracoLoader = new DRACOLoader();
+        this.dracoLoader.setDecoderPath("/draco/");
+        
+        this.gtfLoader = new GLTFLoader(this.loadingManager);
+        this.gtfLoader.setDRACOLoader(this.dracoLoader);
+
+        this.loadingAnimation.element = document.getElementById('.loader');
+    }
+
+
+    loadAssets(texturePaths, modelPaths) {
         texturePaths.forEach(path => this.loadTexture(path));
         modelPaths.forEach(path => this.loadModel(path));
     }
