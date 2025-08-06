@@ -1,13 +1,18 @@
 // managers/ui-manager.js
-import { SWATCH_ICON_PATH, COLORS, MODEL_PARTS, MODEL_CLOTHING, FULL_BODY, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES, TOP_STYLES, BOTTOM_STYLES } from '../config/constants';
 import { Howl } from 'howler';
+import { SWATCH_ICON_PATH, COLORS, MODEL_PARTS, MODEL_CLOTHING, FULL_BODY, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES, TOP_STYLES, BOTTOM_STYLES } from '../config/constants';
 
 export class UIManager {
     constructor(sceneManager) {
         this.sceneManager = sceneManager;
+        this.sceneManager.uiManager = this;
+
+        this.audioInitialized = false;
+        this.sfx = null;
     }
 
     init() {
+        this.initSFX();
         this.initCategories();
         this.initColorSwatches();
         this.initStyleButtons('.hair-styles', HAIR_STYLES);
@@ -18,6 +23,62 @@ export class UIManager {
         this.initControlButtons();
     }
 
+    initSFX() {
+        try {
+            this.sfx = {
+                zoomIn: new Howl ({
+                    src: ['/audio/sfx/System_Camera_Move_Zoom_In.wav'],
+                    volume: 0
+                }),
+                zoomOut: new Howl ({
+                    src: ['/audio/sfx/System_Camera_Move_Zoom_Out.wav'],
+                    volume: 0
+                }),
+                dragStart: new Howl ({
+                    src: ['/audio/sfx/UI_DragStart.wav'],
+                    volume: 0
+                }),
+                dragEnd: new Howl ({
+                    src: ['/audio/sfx/UI_DragEnd.wav'],
+                    volume: 0
+                }),
+                click: new Howl ({
+                    src: ['/audio/sfx/UI_Interior_MultiSelect_On.wav'],
+                    volume: 0
+                }),
+                category: new Howl ({
+                    src: ['/audio/sfx/UI_Interior_ChangeMode.wav'],
+                    volume: 0
+                }),
+                open: new Howl ({
+                    src: ['/audio/sfx/UI_RingMenu_Open.wav'],
+                    volume: 0
+                }),
+                close: new Howl ({
+                    src: ['/audio/sfx/UI_RingMenu_Close.wav'],
+                    volume: 0
+                }),
+            }
+            this.audioInitialized = true;
+        } catch (error) {
+            console.error('SFX initialization failed:', error);
+            this.sfx = {};
+            this.audioInitialized = false;
+        }
+    }
+
+    playSound(soundName) {
+        if (!this.audioInitialized) return;
+
+        const isSoundEnabled = localStorage.getItem('soundEnabled') === 'true';
+        const sfxVolume = parseFloat(localStorage.getItem('sfxVolume') || 0);
+        
+        if (isSoundEnabled && sfxVolume > 0 && this.sfx[soundName]) {
+            this.sfx[soundName].volume(sfxVolume / 100);
+            this.sfx[soundName].play();
+        }
+    }
+
     initCategories() {
         const categoryButtons = document.querySelectorAll('.category-btn');
         const optionPanels = document.querySelectorAll('.options-content');
@@ -25,6 +86,7 @@ export class UIManager {
 
         categoryButtons.forEach(button => {
             button.addEventListener("click", () => {
+                this.playSound('category');
                 const newCategory = button.dataset.options;
 
                 if (newCategory == currentCategory) return;
@@ -94,7 +156,7 @@ export class UIManager {
         this.createStylePanel(
             '.bottom-options',
             null,
-            [MODEL_CLOTHING.ASKIRT, MODEL_CLOTHING.LSHIRT, MODEL_CLOTHING.SHORTS, MODEL_CLOTHING.PANTS]
+            [MODEL_CLOTHING.ASKIRT, MODEL_CLOTHING.LSKIRT, MODEL_CLOTHING.SHORTS, MODEL_CLOTHING.PANTS]
         );
     }
 
@@ -153,8 +215,9 @@ export class UIManager {
     initSwatchEvents(category, targetParts) {
         const swatches = document.querySelectorAll(category.replace(/^/, "."));
 
-        swatches.forEach(swatch => {
+        swatches.forEach(swatch => {            
             swatch.addEventListener('click', () => {
+                this.playSound('click');
                 swatches.forEach(s => s.classList.remove('active'));
                 swatch.classList.add('active');
                 this.sceneManager.updateModelColor(swatch.dataset.color, targetParts);
@@ -219,6 +282,8 @@ export class UIManager {
         }
 
         button.addEventListener('click', () => {
+            this.playSound('click');
+
             document.querySelectorAll(`.${buttonClass}`).forEach(btn => {
                 btn.classList.remove('active');
             });
@@ -250,11 +315,49 @@ export class UIManager {
 
     initControlButtons() {
         document.getElementById('reset-view').addEventListener('click', () => {
+            this.playSound('click');
             this.sceneManager.resetCamera();
         });
 
-        document.getElementById('settings').addEventListener('click', () => {
-            console.log("Settings button clicked");
+        /* Audio Sliders */
+        const sfxSlider = document.getElementById('sfxRange');
+        sfxSlider.addEventListener('input', (e) => {
+            const volume = parseFloat(e.target.value);
+            localStorage.setItem('sfxVolume', volume);
+
+            if (volume > 0 || musicSlider.value > 0) {
+                localStorage.setItem('soundEnabled', 'true');
+            } else {
+                localStorage.setItem('soundEnabled', 'false');
+            }
         });
+        
+        const musicSlider = document.getElementById('musicRange');
+        musicSlider.addEventListener('input', (e) => {
+            const volume = parseFloat(e.target.value);
+            localStorage.setItem('musicVolume', volume);
+
+            if (volume > 0 || sfxSlider.value > 0) {
+                localStorage.setItem('soundEnabled', 'true');
+                this.sceneManager.initAudio();
+            } else {
+                localStorage.setItem('soundEnabled', 'false');
+            }
+            this.sceneManager.updateMusicState();
+        });
+
+        /* Settings Modal */
+        const dialog = document.getElementById('settings');
+        const showDialog = document.getElementById('open-settings');
+        const closeDialog = document.getElementById('close-settings');
+
+        showDialog.addEventListener('click', () => {
+            this.playSound('open');
+            dialog.showModal();
+        });
+        closeDialog.addEventListener('click', () => {
+            this.playSound('close');
+            dialog.close();
+        })
     }
 }

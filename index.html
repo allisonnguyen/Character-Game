@@ -3,8 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <link rel="preload" href="/src/main.js" as="script" />
-    <link rel="preload" href="/src/style.scss" as="style" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>3D Character Customizer App</title>
   </head>
@@ -15,7 +13,7 @@
       <div id="loader"></div>
       <!-- Adding inline style to prevent flash of unstyled content -->
       <div id="sound-options" style="display: none">
-        <h2>This Website Uses Sound To Enhance Your Experience</h2>
+        <h2>This website uses sound to enhance your experience!</h2>
         <div class="sound-buttons">
           <button id="enable-sound" class="sound-button">Enable Sound</button>
           <button id="disable-sound" class="sound-button">Keep Silent</button>
@@ -23,14 +21,12 @@
       </div>
     </div>
 
-    <!-- Settings Modal -->
-
     <!-- Main App Content -->
     <div id="main-content" class="container">
       <!-- 3D Canvas Panel -->
       <div id="experience-container">
         <canvas id="experience-canvas"></canvas>
-        <button id="settings">
+        <button id="open-settings">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 -0.5 96 96"
@@ -42,6 +38,45 @@
             />
           </svg>
         </button>
+
+        <!-- Settings Modal -->
+        <dialog id="settings">
+          <div class="title">
+            <h1>Settings</h1>
+          </div>
+          <div class="content">
+            <div class="themes">
+              <h2>Themes</h2>
+              <div class="theme-options">
+                <!-- Buttons will be generated here by JavaScript -->
+              </div>
+            </div>
+            <div class="sfx">
+              <h2>SFX</h2>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value="100"
+                class="slider"
+                id="sfxRange"
+              />
+            </div>
+            <div class="music">
+              <h2>Music</h2>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value="100"
+                class="slider"
+                id="musicRange"
+              />
+            </div>
+          </div>
+          <button id="close-settings">Close</button>
+        </dialog>
+
         <button id="reset-view">
           <svg
             xmlns="http://www.w3.org/2000/svg"

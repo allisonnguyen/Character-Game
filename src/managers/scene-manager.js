@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { Howl } from 'howler';
 import { normalizeColor } from '../utils/colorUtils';
 import { SCENE_SETTINGS, COLORS, MODEL_PARTS, MODEL_CLOTHING, HAIR_STYLES } from '../config/constants';
 
@@ -32,6 +33,9 @@ export class SceneManager {
                 this.stopLoadingAnimation();
             }
         );
+
+        this.audioInitialized = false;
+        this.backgroundMusic = null;
 
         this.render = this.render.bind(this);                                                           // Bind to SceneManager instance for passing to requestAnimationFrame
         this.initLoaders();
@@ -91,7 +95,6 @@ export class SceneManager {
         
         if (loadingElement && soundOptions && textElement && enableSoundBtn && disableSoundBtn) {
             const isSmallScreen = window.innerWidth <= 480;
-            const animationDuration = isSmallScreen ? '0s' : '2s';
 
             // Show sound options container
             soundOptions.style.display = 'flex';
@@ -120,6 +123,7 @@ export class SceneManager {
                 soundOptions.style.opacity = '1';
 
                 if (isSmallScreen) {
+                    // No text animation
                     textElement.style.animation = 'none';
                     textElement.style.whiteSpace = 'normal';
                     
@@ -163,6 +167,12 @@ export class SceneManager {
     handleSoundChoice(enableSound) {
         localStorage.setItem('soundEnabled', enableSound);
 
+        if (enableSound && !this.audioInitialized) {
+            this.initAudio();
+        }
+
+        this.updateAudioSliders(enableSound);
+
         const loadingElement = document.getElementById('loading-screen');
         const mainContent = document.getElementById('main-content');
         
@@ -176,6 +186,51 @@ export class SceneManager {
         } 
     }
 
+    /**  -------------------------- Audio -------------------------- */
+
+    initAudio () {
+        if (this.audioInitialized) return;
+        
+        this.backgroundMusic = new Howl({
+            src: ['/audio/music/Fishing Log.mp3'],
+            loop: true,
+            volume: 0
+        });
+        
+        this.audioInitialized = true;
+        this.updateMusicState();
+    }
+
+    updateAudioSliders(enableSound) {
+        const sfxSlider = document.getElementById('sfxRange');
+        const musicSlider = document.getElementById('musicRange');
+        
+        if (sfxSlider && musicSlider) {
+            const value = enableSound ? 100 : 0;
+            sfxSlider.value = value;
+            musicSlider.value = value;
+            
+            sfxSlider.dispatchEvent(new Event('input'));
+            musicSlider.dispatchEvent(new Event('input'));
+        }
+    }
+
+    updateMusicState() {
+        if (!this.audioInitialized) return;
+
+        const isSoundEnabled = localStorage.getItem('soundEnabled') === 'true';
+        const musicVolume = parseFloat(localStorage.getItem('musicVolume') || 0);
+
+        if (isSoundEnabled && musicVolume > 0) {
+            this.backgroundMusic.volume(musicVolume / 100);
+            if (!this.backgroundMusic.playing()) {
+                this.backgroundMusic.play();
+            }
+        } else {
+            this.backgroundMusic.stop();
+        }
+    }
+
     /**  -------------------------- Load Models and Textures -------------------------- */
 
     initLoaders() {
@@ -187,7 +242,7 @@ export class SceneManager {
         this.gtfLoader = new GLTFLoader(this.loadingManager);
         this.gtfLoader.setDRACOLoader(this.dracoLoader);
 
-        this.loadingAnimation.element = document.getElementById('.loader');
+        this.loadingAnimation.element = document.getElementById('loader');
     }
 
 
@@ -496,12 +551,19 @@ export class SceneManager {
 
     moveCamera(actionName) {
         let startPosition, endPosition;
+        let soundEffect = null;
         if (actionName === 'LookUp') {
             startPosition = new THREE.Vector3().copy(SCENE_SETTINGS.CAMERA.position);
             endPosition = new THREE.Vector3().copy(SCENE_SETTINGS.CAMERA.lookUpPosition);
+            soundEffect = 'zoomIn';
         } else if (actionName === 'LookBack') {
             startPosition = new THREE.Vector3().copy(SCENE_SETTINGS.CAMERA.lookUpPosition);
             endPosition = new THREE.Vector3().copy(SCENE_SETTINGS.CAMERA.position);
+            soundEffect = 'zoomOut';
+        }
+
+        if (soundEffect && this.uiManager) {
+            this.uiManager.playSound(soundEffect);
         }
 
         const duration = 0.5;
@@ -509,6 +571,7 @@ export class SceneManager {
         
         const animateCamera = () => {
             const currentTime = this.clock.getElapsedTime();
+
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
             

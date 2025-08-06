@@ -15,6 +15,7 @@ async function init() {
   const uiManager = new UIManager(sceneManager);
   uiManager.init();
 
+  sceneManager.updateMusicState();
   sceneManager.render();
 }
 
