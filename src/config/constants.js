@@ -11,6 +11,45 @@ export const MOUTH_1_PATH = 'M13 33h4M79 33h4M11 34h7M78 34h7M11 35h8M77 35h8M10
 export const MOUTH_2_PATH = 'M6 42h4M86 42h4M5 43h7M84 43h7M5 44h8M42 44h12M83 44h8M4 45h10M39 45h18M82 45h10M4 46h11M34 46h28M81 46h11M4 47h13M32 47h32M79 47h13M4 48h18M30 48h36M74 48h18M4 49h88M5 50h86M6 51h84M7 52h82M8 53h80M10 54h33M53 54h33M12 55h28M56 55h28M15 56h20M61 56h20M18 57h12M66 57h12';
 export const MOUTH_3_PATH = 'M35 31h13M34 32h16M33 33h20M32 34h22M31 35h25M30 36h28M29 37h31M28 38h33M27 39h36M26 40h39M25 41h14M44 41h23M24 42h14M47 42h21M23 43h14M49 43h22M22 44h14M51 44h22M21 45h14M53 45h22M20 46h14M55 46h22M19 47h14M56 47h23M18 48h15M58 48h23M17 49h15M59 49h24M15 50h16M61 50h23M15 51h15M63 51h22M13 52h16M64 52h22M13 53h16M65 53h22M12 54h16M67 54h20M12 55h16M68 55h19M12 56h15M69 56h18M12 57h14M71 57h16M12 58h14M73 58h13M12 59h13M75 59h11M12 60h12M77 60h8M12 61h12M79 61h5M12 62h11M13 63h9M14 64h6M15 65h3';
 
+export const THEMES = {
+  DEFAULT: {
+    name: 'Default',
+    primary: '#00ced1',
+    primaryDark: '#007c74',
+    secondary: '#73654b',
+    accent: '#f7d359',
+    background: '#f8eebb',
+    lightBackground: '#fff9e6'
+  },
+  PINK: {
+    name: 'Pink',
+    primary: '#febdc3',
+    primaryDark: '#ef758a',
+    secondary: '#73654b',
+    accent: '#32624c',
+    background: '#88c9a1',
+    lightBackground: '#e5ffe4'
+  },
+  GREEN: {
+    name: 'Green',
+    primary: '#88C9A1',
+    primaryDark: '#32624C',
+    secondary: '#73654B',
+    accent: '#EF758A',
+    background: '#FEBDC3',
+    lightBackground: '#FFEBED'
+  },
+  BLUE: {
+    name: 'Blue',
+    primary: '#6AB7CA',
+    primaryDark: '#15353C',
+    secondary: '#73654B',
+    accent: '#8F1300',
+    background: '#E4A79E',
+    lightBackground: '#FFE8DC'
+  }
+};
+
 export const COLORS = {
     BACKGROUND: '#f8eebb',
     BASE: '#f0f0f0',

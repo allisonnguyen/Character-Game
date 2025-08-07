@@ -1,6 +1,8 @@
 // managers/ui-manager.js
+import * as THREE from 'three';
 import { Howl } from 'howler';
-import { SWATCH_ICON_PATH, COLORS, MODEL_PARTS, MODEL_CLOTHING, FULL_BODY, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES, TOP_STYLES, BOTTOM_STYLES } from '../config/constants';
+import { normalizeColor } from '../utils/colorUtils';
+import { SWATCH_ICON_PATH, THEMES, COLORS, MODEL_PARTS, MODEL_CLOTHING, FULL_BODY, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES, TOP_STYLES, BOTTOM_STYLES } from '../config/constants';
 
 export class UIManager {
     constructor(sceneManager) {
@@ -13,6 +15,7 @@ export class UIManager {
 
     init() {
         this.initSFX();
+        this.initThemeButtons();
         this.initCategories();
         this.initColorSwatches();
         this.initStyleButtons('.hair-styles', HAIR_STYLES);
@@ -77,6 +80,41 @@ export class UIManager {
             this.sfx[soundName].volume(sfxVolume / 100);
             this.sfx[soundName].play();
         }
+    }
+
+    initThemeButtons() {
+        const themeContainer = document.querySelector('.theme-options');
+        if (!themeContainer) return;
+
+        themeContainer.innerHTML = '';
+        
+        Object.entries(THEMES).forEach(([key, theme]) => {
+            const button = document.createElement('button');
+            button.className = 'theme-btn';
+            button.dataset.theme = key;
+            button.style.backgroundColor = theme.accent;
+            button.title = theme.name;
+            
+            button.addEventListener('click', () => {
+                this.playSound('click');
+                this.applyTheme(theme);
+            });
+            
+            themeContainer.appendChild(button);
+        });
+    }
+
+      applyTheme(theme) {
+        document.documentElement.style.setProperty('--color-primary', theme.primary);
+        document.documentElement.style.setProperty('--color-primary-dark', theme.primaryDark);
+        document.documentElement.style.setProperty('--color-secondary', theme.secondary);
+        document.documentElement.style.setProperty('--color-accent', theme.accent);
+        document.documentElement.style.setProperty('--color-dark-tan', theme.background);
+        document.documentElement.style.setProperty('--color-light-tan', theme.lightBackground);
+        
+        this.sceneManager.scene.background = new THREE.Color(normalizeColor(theme.background));
+        
+        localStorage.setItem('selectedTheme', JSON.stringify(theme));
     }
 
     initCategories() {

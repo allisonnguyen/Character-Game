@@ -166,11 +166,11 @@ dialog[open] {
     position: absolute;
     top: 50%;
     left: 50%;
-    max-width: 1200px;
-    width: 70%;
-    overflow: hidden;
+    max-width: 80%;
+    width: auto;
+    overflow: visible;
     transform: translate(-50%, -50%);
-    padding: 30px;
+    padding: 40px;
     gap: 10px;
     border-radius: 25px;
     border: transparent;
@@ -188,10 +188,12 @@ dialog[open] {
 }
 
 .modal-content,
+.themes,
 .sfx,
 .music {
     @include vars.centered;
     flex-direction: column;
+    width: 90%;
     gap: 10px;
     h2 {
         font-size: 12px;
@@ -201,6 +203,23 @@ dialog[open] {
 .theme-options {
     @include vars.centered;
     flex-direction: row;
+}
+
+.theme-options {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
+.theme-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 3px solid vars.$color-white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
 /* Slider */
@@ -249,10 +268,30 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 #close-settings {
+    @include vars.centered;
+    position: absolute;
+    top: -1rem;
+    left: -1rem;
+    width: 45px;
+    height: 45px;
     font-family: 'FOT Seurat Pro';
-    color: vars.$color-secondary;
-    background: transparent;
-    border: transparent;
+    color: vars.$color-white;
+    background: vars.$color-primary;
+    border: 5px solid vars.$color-primary-dark;
+    border-radius: 15px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transform: rotate(-15deg);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    &:hover {
+        transform: rotate(45deg) scale(1.3);
+    }
+
+    svg {
+        width: 15px;
+        height: 15px;
+    }
 }
 
 #reset-view {
@@ -543,6 +582,7 @@ input[type=range]::-webkit-slider-runnable-track {
 /* Button animations */
 #open-settings, 
 #reset-view,
+.theme-btn,
 .sound-button,
 .skin-option, 
 .eye-option, 
@@ -571,16 +611,20 @@ input[type=range]::-webkit-slider-runnable-track {
         padding: 20px 30px;
     }
 
+    dialog[open] {
+        padding-top: 30px;
+    }
+
     .modal-title {
         padding: 5px 30px;
         h1 {
-            font-size: 16px;
+            font-size: 18px;
         }
     }
 
     .modal-content {
         h2 {
-            font-size: 12px;
+            font-size: 14px;
         }
     }
 
@@ -644,6 +688,28 @@ input[type=range]::-webkit-slider-runnable-track {
         padding: 20px 40px;
     }
 
+    .sfx,
+    .music {
+        width: 70%;
+    }
+
+    .theme-btn {
+        width: 50px;
+        height: 50px;
+    }
+
+    #close-settings {
+        top: -1.5rem;
+        left: -1.5rem;
+        width: 60px;
+        height: 60px;
+
+        svg {
+            width: 30px;
+            height: 30px;
+        }
+    }
+
     .category-btn {
         width: clamp(60px, 9vmin, 85px);
         height: clamp(60px, 9vmin, 85px);
@@ -703,6 +769,23 @@ input[type=range]::-webkit-slider-runnable-track {
         }
     }
 
+    .sfx,
+    .music {
+        width: 60%;
+    }
+
+    #close-settings {
+        top: -1.5rem;
+        left: -1.5rem;
+        width: 60px;
+        height: 60px;
+        
+        svg {
+            width: 30px;
+            height: 30px;
+        }
+    }
+
     .options-panel {
         padding-bottom: 3vw;
     }
@@ -746,9 +829,14 @@ input[type=range]::-webkit-slider-runnable-track {
     #customization-panel {
         padding: 20px 50px;
     }
+    
+    dialog[open] {
+        width: 50%;
+        height: 60%;
+    }
 
     .modal-title {
-        padding: 10px 80px;
+        padding: 5px 60px;
         h1 {
             font-size: 36px;
         }
@@ -758,6 +846,16 @@ input[type=range]::-webkit-slider-runnable-track {
         h2 {
             font-size: 24px;
         }
+    }
+
+    .theme-btn {
+        width: 60px;
+        height: 60px;
+    }
+
+    .sfx,
+    .music {
+        width: 40%;
     }
 
     .options-panel {

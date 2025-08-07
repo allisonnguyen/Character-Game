@@ -5,7 +5,7 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { Howl } from 'howler';
 import { normalizeColor } from '../utils/colorUtils';
-import { SCENE_SETTINGS, COLORS, MODEL_PARTS, MODEL_CLOTHING, HAIR_STYLES } from '../config/constants';
+import { SCENE_SETTINGS, COLORS, MODEL_PARTS, HAIR_STYLES } from '../config/constants';
 
 export class SceneManager {
     constructor() {
@@ -220,7 +220,7 @@ export class SceneManager {
         const musicVolume = parseFloat(localStorage.getItem('musicVolume') || 0);
 
         if (isSoundEnabled && musicVolume > 0) {
-            this.backgroundMusic.volume(musicVolume / 100);
+            this.backgroundMusic.volume((musicVolume / 100) * 0.5);
             if (!this.backgroundMusic.playing()) {
                 this.backgroundMusic.play();
             }
