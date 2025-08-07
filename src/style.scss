@@ -137,16 +137,16 @@ body,
     @include vars.centered;
     width: clamp(40px, 6vmin, 70px);
     height: clamp(40px, 6vmin, 70px);
-    background-color: vars.$color-white;
-    color: vars.$color-gray;
+    background-color: vars.$color-accent;
+    color: vars.$color-white;
     border: none;
     border-radius: 50%;
     overflow: hidden;
 }
 
 #open-settings {
-    top: 20px;
-    left: 20px;
+    top: 30px;
+    left: 30px;
 
     svg {
         width: 75%;
@@ -170,21 +170,75 @@ dialog[open] {
     width: 70%;
     transform: translate(-50%, -50%);
     padding: 30px;
+    gap: 10px;
     border-radius: 25px;
     border: transparent;
     background: vars.$color-light-tan;
 }
 
-.content,
+.modal-title {
+  @include vars.centered;
+  padding: 10px 80px;
+  border-radius: 5rem;
+  background-color: vars.$color-dark-tan;
+}
+
+.modal-content,
 .sfx,
 .music {
     @include vars.centered;
     flex-direction: column;
+    gap: 10px;
 }
 
 .theme-options {
     @include vars.centered;
     flex-direction: row;
+}
+
+/* Slider */
+input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+input[type=range]::-ms-track {
+    width: 100%;
+    cursor: pointer;
+
+    background: transparent; 
+    border-color: transparent;
+    color: transparent;
+}
+
+/* Slider Thumb */
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: 2px solid vars.$color-primary-dark;
+  height: 36px;
+  width: 10px;
+  border-radius: 5px;
+  background: vars.$color-light-tan;
+  cursor: pointer;
+  margin-top: -14px;
+}
+
+/* Slider Track */
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 12px;
+  background: vars.$color-primary;
+  border-radius: 3px;
+  border: 1.5px solid vars.$color-primary-dark;
 }
 
 #close-settings {
@@ -195,8 +249,8 @@ dialog[open] {
 }
 
 #reset-view {
-    bottom: 20px;
-    right: 20px;
+    bottom: 30px;
+    right: 30px;
 
     svg {
         width: 60%;
@@ -209,7 +263,7 @@ dialog[open] {
     grid-template-rows: 30% 70%;
     height: 100%;
     padding: 15px 25px;
-    background-color: vars.$color-white;
+    background-color: vars.$color-light-tan;
     overflow: hidden;
 }
 
@@ -231,10 +285,10 @@ dialog[open] {
     width: clamp(50px, 12vmin, 70px);
     height: clamp(50px, 12vmin, 70px);
     margin: 0 -2px;
-    background-color: vars.$color-dark-gray;
+    background-color: vars.$color-accent;
     border: none;
     border-radius: 50%;
-    color: vars.$color-gray;
+    color: vars.$color-light-tan;
     cursor: pointer;
     overflow: hidden;
 
@@ -370,7 +424,7 @@ dialog[open] {
     height: clamp(70px, 18vmin, 90px);
     border-radius: 50%;
     border: 4px solid transparent;
-    background: vars.$color-white;
+    background: vars.$color-light-tan;
     cursor: pointer;
     padding: 5px;
     flex-shrink: 0;
@@ -391,7 +445,7 @@ dialog[open] {
 .top-style,
 .bottom-style {
     @include vars.centered;
-    background: vars.$color-white;
+    background: vars.$color-light-tan;
     cursor: pointer;
     flex-shrink: 0;
     min-width: 0;
@@ -435,7 +489,7 @@ dialog[open] {
     height: clamp(25px, 9vmin, 60px);
     border-radius: 50%;
     border: 3px solid transparent;
-    background: vars.$color-white;
+    background: vars.$color-light-tan;
     cursor: pointer;
     padding: 3px;
     flex-shrink: 0;
@@ -479,7 +533,7 @@ dialog[open] {
     }
 }
 
-// Button animations
+/* Button animations */
 #open-settings, 
 #reset-view,
 .sound-button,

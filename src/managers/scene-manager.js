@@ -78,8 +78,6 @@ export class SceneManager {
         this.addModelToScene(MODEL_PARTS.RIGHT_PUPIL);
         this.addModelToScene(MODEL_PARTS.EYEBROWS);
         this.addModelToScene(MODEL_PARTS.NOSE_TRIANGLE);
-        this.addModelToScene(MODEL_CLOTHING.TSHIRT);
-        this.addModelToScene(MODEL_CLOTHING.SHORTS);
 
         this.stopLoadingAnimation();
         this.render();
@@ -330,7 +328,7 @@ export class SceneManager {
     /**  -------------------------------------- Scene -------------------------------------- */
 
     setupScene(experienceContainer, experienceCanvas) {
-        this.scene.background = new THREE.Color(normalizeColor(COLORS.BASE));
+        this.scene.background = new THREE.Color(SCENE_SETTINGS.BACKGROUND);
 
         this.sizes =  {
             width: experienceContainer.clientWidth,
@@ -387,7 +385,7 @@ export class SceneManager {
         floor.rotation.x = -0.5 * Math.PI;
         floor.receiveShadow = true;
         floor.position.y = 0;
-        this.scene.add(floor);
+        // this.scene.add(floor);
 
         // Setup Renderer
         this.renderer = new THREE.WebGLRenderer({

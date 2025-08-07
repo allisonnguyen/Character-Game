@@ -12,6 +12,7 @@ export const MOUTH_2_PATH = 'M6 42h4M86 42h4M5 43h7M84 43h7M5 44h8M42 44h12M83 4
 export const MOUTH_3_PATH = 'M35 31h13M34 32h16M33 33h20M32 34h22M31 35h25M30 36h28M29 37h31M28 38h33M27 39h36M26 40h39M25 41h14M44 41h23M24 42h14M47 42h21M23 43h14M49 43h22M22 44h14M51 44h22M21 45h14M53 45h22M20 46h14M55 46h22M19 47h14M56 47h23M18 48h15M58 48h23M17 49h15M59 49h24M15 50h16M61 50h23M15 51h15M63 51h22M13 52h16M64 52h22M13 53h16M65 53h22M12 54h16M67 54h20M12 55h16M68 55h19M12 56h15M69 56h18M12 57h14M71 57h16M12 58h14M73 58h13M12 59h13M75 59h11M12 60h12M77 60h8M12 61h12M79 61h5M12 62h11M13 63h9M14 64h6M15 65h3';
 
 export const COLORS = {
+    BACKGROUND: '#f8eebb',
     BASE: '#f0f0f0',
     SKIN: [
         '#f0f0f0',              // base
@@ -86,6 +87,7 @@ export const MODEL_PATHS = [
 ];
 
 export const HAIR_STYLES = {
+  'bald': '/media/bald.png',
   'spikey': '/media/spikey.png',
   'wavy': '/media/wavy.png',
 }
@@ -115,7 +117,7 @@ export const BOTTOM_STYLES = {
 }
 
 export const SCENE_SETTINGS = {
-  BACKGROUND: normalizeColor(COLORS.BASE),
+  BACKGROUND: normalizeColor(COLORS.BACKGROUND),
   CAMERA: {
     position: { x: 0, y: 1, z: 5 },
     lookUpPosition: { x: 4, y: 3.5, z: 2.5  },
@@ -147,7 +149,7 @@ export const SCENE_SETTINGS = {
         heightSegments: 1
     },
     material: {
-        color: normalizeColor(COLORS.BASE),
+        color: normalizeColor(COLORS.BACKGROUND),
         shininess: 0
     }
   }

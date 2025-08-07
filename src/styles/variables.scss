@@ -2,14 +2,21 @@
 
 /* Colors */
 $color-primary: #00ced1;
+$color-primary-dark: #007c74;
 $color-secondary: #73654b;
 $color-accent: #f7d359;
 $color-dark-tan: #f8eebb;
 $color-light-tan: #fff9e6;
-$color-white: #ffffff;
+$color-white: #ffff;
 $color-gray: #828282;
 $color-dark-gray: #444;
 $color-light-gray: #ccc;
+$color-dark-pink: #ef758a;
+$color-light-pink: #febdc3;
+$color-dark-blue: #6ab7ca;
+$color-light-blue: #93cfc8;
+$color-dark-green: #68b893;
+$color-light-green: #88c9a1;
 
 /* Mixins */
 @mixin centered {
