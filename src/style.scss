@@ -14,20 +14,7 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-html,
-body,
-.container {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
-.container {
-    display: grid;
-    grid-template-columns: 100%;
-    grid-template-rows: 40vh auto;
-    position: relative;
-}
+/* ----- Loading Screen ----- */
 
 #loading-screen {
     position: fixed;
@@ -118,46 +105,12 @@ body,
     }
 }
 
-#experience-container {
-    position: relative;
-    height: 100%;
-}
-
-#experience-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-}
-
-#open-settings, #reset-view {
-    position: absolute;
-    @include vars.centered;
-    width: clamp(40px, 6vmin, 70px);
-    height: clamp(40px, 6vmin, 70px);
-    background-color: vars.$color-accent;
-    color: vars.$color-white;
-    border: none;
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-#open-settings {
-    top: 30px;
-    left: 30px;
-
-    svg {
-        width: 75%;
-        height: 75%;
-    }
-}
+/* ----- Settings Modal ----- */
 
 dialog {
-    display: none;
     font-family: 'FOT Seurat Pro';
     color: vars.$color-secondary;
+    opacity: 0;
 }
 
 dialog[open] {
@@ -166,37 +119,54 @@ dialog[open] {
     position: absolute;
     top: 50%;
     left: 50%;
-    max-width: 80%;
-    width: auto;
+    width: min(70%, 1000px);
+    height: auto;
+    min-height: min(80vh, 600px);
+    max-height: 90vh;
     overflow: visible;
-    transform: translate(-50%, -50%);
-    padding: 40px;
+    padding: 10%;
     gap: 10px;
     border-radius: 25px;
     border: transparent;
     background: vars.$color-light-tan;
+    opacity: 1;
+    @media (max-height: 480px) {
+        padding: 4%;
+    }
 }
 
 .modal-title {
-  @include vars.centered;
-  padding: 10px 20px;
-  border-radius: 5rem;
-  background-color: vars.$color-dark-tan;
-  h1 {
-    font-size: 16px;
-  }
+    @include vars.centered;
+    position: absolute;
+    top: -2rem;
+    left: 50%;
+    bottom: auto;
+    transform: translateX(-50%);
+    border-radius: 5rem;
+    padding: 10px 30px;
+    background-color: vars.$color-dark-tan;
+    h1 {
+        font-size: clamp(16px, 3vw, 28px);
+    }
 }
 
-.modal-content,
+.modal-content {
+    @include vars.centered;
+    flex-direction: column;
+    width: 60%;
+    height: 100%;
+    gap: 3vh;
+}
+
 .themes,
 .sfx,
 .music {
+    width: 100%;
+    height: 100%;
     @include vars.centered;
     flex-direction: column;
-    width: 90%;
-    gap: 10px;
     h2 {
-        font-size: 12px;
+        font-size: clamp(2vw, 16px, 6vw);
     }
 }
 
@@ -206,23 +176,72 @@ dialog[open] {
 }
 
 .theme-options {
-  display: flex;
-  gap: 10px;
-  padding: 10px 0;
-  flex-wrap: nowrap;
-  justify-content: center;
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    flex-wrap: nowrap;
+    justify-content: center;
 }
 
 .theme-btn {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 3px solid vars.$color-white;
-  cursor: pointer;
-  transition: transform 0.2s ease;
+    width: clamp(40px, 7vw, 60px);
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    border: 3px solid vars.$color-white;
+    cursor: pointer;
+    transition: transform 0.2s ease;
 }
 
-/* Slider */
+#close-settings {
+    @include vars.centered;
+    position: absolute;
+    top: -1rem;
+    left: -1rem;
+    width: clamp(45px, 6vw, 60px);
+    aspect-ratio: 1/1;
+    font-family: 'FOT Seurat Pro';
+    color: vars.$color-white;
+    background: vars.$color-primary;
+    border: 5px solid vars.$color-primary-dark;
+    border-radius: 15px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transform: rotate(-15deg);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    &:hover {
+        transform: rotate(45deg) scale(1.3);
+    }
+
+    svg {
+        width: clamp(15px, 2vw, 30px);
+        aspect-ratio: 1/1;
+    }
+
+    @media (max-width: 480px) {
+        top: auto;
+        left: 50%;
+        bottom: -1.5rem;
+        transform: translateX(-50%);
+
+        &:hover {
+            transform: translateX(-50%) scale(1.3);
+        }
+    }
+
+    @media (max-height: 480px) {
+        top: auto;
+        left: 50%;
+        bottom: -1.5rem;
+        transform: translateX(-50%);
+
+        &:hover {
+            transform: translateX(-50%) scale(1.3);
+        }
+    }
+}
+
+// Slider
 input[type=range] {
     -webkit-appearance: none;
     width: 100%;
@@ -246,7 +265,7 @@ input[type=range]::-ms-track {
     color: transparent;
 }
 
-/* Slider Thumb */
+// Slider Thumb
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   border: 2px solid vars.$color-primary-dark;
@@ -258,7 +277,7 @@ input[type=range]::-webkit-slider-thumb {
   margin-top: -14px;
 }
 
-/* Slider Track */
+// Slider Track
 input[type=range]::-webkit-slider-runnable-track {
   width: 100%;
   height: 12px;
@@ -267,36 +286,63 @@ input[type=range]::-webkit-slider-runnable-track {
   border: 1.5px solid vars.$color-primary-dark;
 }
 
-#close-settings {
-    @include vars.centered;
-    position: absolute;
-    top: -1rem;
-    left: -1rem;
-    width: 45px;
-    height: 45px;
-    font-family: 'FOT Seurat Pro';
-    color: vars.$color-white;
-    background: vars.$color-primary;
-    border: 5px solid vars.$color-primary-dark;
-    border-radius: 15px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transform: rotate(-15deg);
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+/* ----- Main Container ----- */
 
-    &:hover {
-        transform: rotate(45deg) scale(1.3);
-    }
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#main-content {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 40vh auto;
+    position: relative;
+}
+
+#experience-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#experience-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* ----- Control Buttons ----- */
+
+#open-settings, #reset-view {
+    position: absolute;
+    @include vars.centered;
+    width: clamp(40px, 6vmin, 70px);
+    height: clamp(40px, 6vmin, 70px);
+    background-color: vars.$color-accent;
+    color: vars.$color-white;
+    border: none;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+#open-settings {
+    top: 2em;
+    left: 2em;
 
     svg {
-        width: 15px;
-        height: 15px;
+        width: 75%;
+        height: 75%;
     }
 }
 
 #reset-view {
-    bottom: 30px;
-    right: 30px;
+    bottom: 2em;
+    right: 2em;
 
     svg {
         width: 60%;
@@ -304,18 +350,21 @@ input[type=range]::-webkit-slider-runnable-track {
     }
 }
 
+/* ----- Customization ----- */
+
 #customization-panel {
     display: grid;
-    grid-template-rows: 30% 70%;
-    height: 100%;
+    grid-template-rows: 20% 80%;
     padding: 15px 25px;
     background-color: vars.$color-light-tan;
     overflow: hidden;
-}
+    touch-action: manipulation;
 
-.category-buttons-container {
-    width: 100%;
-    min-height: 0;
+    @media (max-height: 480px) {
+        grid-template-columns: 20% 80%;
+        grid-template-rows: 100%;
+        direction: rtl;
+    }
 }
 
 .category-buttons {
@@ -323,13 +372,18 @@ input[type=range]::-webkit-slider-runnable-track {
     flex-direction: row;
     width: 100%;
     height: 100%;
+    min-height: 0;
+
+    @media (max-height: 480px) {
+        flex-direction: column;
+    }
 }
 
 .category-btn {
     @include vars.centered;
     z-index: 1;
-    width: clamp(50px, 12vmin, 70px);
-    height: clamp(50px, 12vmin, 70px);
+    width: clamp(55px, 10vmin, 115px);
+    height: clamp(55px, 10vmin, 115px);
     margin: 0 -2px;
     background-color: vars.$color-accent;
     border: none;
@@ -348,24 +402,23 @@ input[type=range]::-webkit-slider-runnable-track {
         color: vars.$color-white;
 
         svg {
-            width: 60%;
-            height: 60%;
+            width: 70%;
+            height: 70%;
         }
     }
 }
 
-.options-panel-container {
-    width: 100%;
-    min-height: 0;
-}
-
 .options-panel {
-    @include vars.centered;
-    flex-direction: column;
     width: 100%;
     height: 100%;
+    min-height: 0;
+    @include vars.centered;
+    flex-direction: column;
     overflow: hidden;
-    padding-bottom: 7vw;
+
+    @media (max-height: 480px) {
+        direction: ltr;
+    }
 }
 
 .options-content {
@@ -382,97 +435,19 @@ input[type=range]::-webkit-slider-runnable-track {
 
 .options-row {
     @include vars.centered;
-    flex-wrap: nowrap;
     gap: 1vw;
     width: 100%;
 }
 
-.skin-options,
-.eye-options,
-.hair-options,
-.face-options,
-.top-options,
-.bottom-options {
-    @include vars.centered;
-    flex-direction: column;
-    min-height: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.hair-options {
-    padding-top: 2vw;
-    display: grid;
-    grid-template-rows: 40% 60%;
-    grid-template-columns: 100%;
-}
-
-.face-options {
-    padding-top: 2vw;
-    display: grid;
-    grid-template-rows: 60% 40%;
-    grid-template-columns: 100%;
-}
-
-.nose-options {
-    display: grid;
-    grid-template-rows: 50% 50%;
-    grid-template-columns: 100%;
-    width: 100%;
-    height: 100%;
-}
-
-.hair-styles,
-.hair-colors,
-.nose-styles,
-.nose-colors,
-.mouth-styles,
-.top-styles,
-.bottom-styles {
-    width: 100%;
-    min-height: 0;
-    overflow: hidden;
-}
-
-.hair-styles,
-.nose-styles {
-    grid-row: 1;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 3vw;
-}
-
-.top-styles,
-.bottom-styles {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 3vw;
-}
-
-.hair-colors,
-.nose-colors,
-.mouth-styles {
-    grid-row: 2;
-    @include vars.centered;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
 .skin-option,
 .eye-option {
-    @include vars.centered;
-    width: clamp(70px, 18vmin, 90px);
-    height: clamp(70px, 18vmin, 90px);
+    width: clamp(85px, 17vmin, 200px);
+    aspect-ratio: 1/1;
     border-radius: 50%;
-    border: 4px solid transparent;
+    border: clamp(2px, 0.5vw, 10px) solid transparent;
     background: vars.$color-light-tan;
     cursor: pointer;
-    padding: 5px;
+    padding: 3px;
     flex-shrink: 0;
     min-width: 0;
 
@@ -485,56 +460,94 @@ input[type=range]::-webkit-slider-runnable-track {
     }
 }
 
-.hair-style,
-.nose-style,
-.mouth-style,
-.top-style,
-.bottom-style {
-    @include vars.centered;
+.hair-options {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    height: 100%;
+    width: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: 30% 70%;
+    grid-template-columns: 100%;
+    padding: 3vw;
+
+    @media (max-height: 480px) {
+        align-items: flex-end;
+    }
+}
+
+.hair-styles, .nose-styles, .mouth-styles {
+    min-height: 0;
+    grid-row: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 3vw;
+}
+
+.hair-style {
+    width: clamp(70px, 18vmin, 150px);
+    aspect-ratio: 1/1;
+    border-radius: 35%;
+    border: 0.5vw solid transparent;
+    overflow: hidden;
     background: vars.$color-light-tan;
     cursor: pointer;
-    flex-shrink: 0;
-    min-width: 0;
 
     &.active {
         border-color: vars.$color-primary;
+        background: vars.$color-primary;
+
     }
 }
 
-.hair-style,
-.top-style,
-.bottom-style {
-    width: clamp(70px, 18vmin, 150px);
-    height: clamp(70px, 18vmin, 150px);
+.nose-style, .mouth-style {
+    @include vars.centered;
+    width: clamp(50px, 15vmin, 170px);
+    height: clamp(30px, 13vmin, 150px);
     border-radius: 35%;
-    border: 4px solid transparent;
+    border: clamp(2px, 0.5vw, 10px) solid transparent;
     overflow: hidden;
+    background: vars.$color-light-tan;
+    cursor: pointer;
+
+    &:hover, &.active {
+            transform: scale(1.2);
+    }
 
     &.active {
-        background: vars.$color-primary;
+        border-color: vars.$color-primary;
+        background: transparent;
+
     }
 }
 
-.top-style,
-.bottom-style {
-    padding: 8px;
+.hair-colors, .nose-colors {
+    grid-row: 2;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    gap: clamp(0.5rem, 1vw, 1.5rem);
+    padding: 1vw;
 }
 
-.nose-style,
-.mouth-style {
-    width: clamp(70px, 20vmin, 200px);
-    height: clamp(50px, 17vmin, 150px);
-    border: 4px solid transparent;
-    border-radius: 50px;
+.hair-color {
+    flex: 0 0 clamp(40px, 12vmin, 125px);
+    aspect-ratio: 1/1;
 }
 
-.hair-color,
 .nose-color {
-    @include vars.centered;
-    width: clamp(25px, 9vmin, 60px);
-    height: clamp(25px, 9vmin, 60px);
+    flex: 0 0 clamp(40px, 12vmin, 125px);
+    aspect-ratio: 1/1;
+}
+
+.hair-color, .nose-color {
     border-radius: 50%;
-    border: 3px solid transparent;
+    border: clamp(2px, 0.5vw, 10px) solid transparent;
     background: vars.$color-light-tan;
     cursor: pointer;
     padding: 3px;
@@ -549,9 +562,60 @@ input[type=range]::-webkit-slider-runnable-track {
     }
 }
 
-.hair-style,
+.face-options {
+    @include vars.centered;
+    height: 100%;
+    width: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: 60% 40%;
+    grid-template-columns: 100%;
+    padding: 2vw;
+}
+
+.nose-options {
+    @include vars.centered;
+    height: 100%;
+    width: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: 50% 50%;
+    grid-template-columns: 100%;
+}
+
+.top-options,
+.bottom-options {
+    padding-bottom: 5vw;
+
+    @media (max-height: 480px) {
+        padding-bottom: 0;
+    }
+}
+
+.top-styles,
+.bottom-styles {
+    @include vars.centered;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: clamp(1rem, 2vw, 2rem);
+    padding: 1rem;
+}
+
 .top-style,
 .bottom-style {
+    flex: 0 0 clamp(120px, 18vmin, 180px);
+    aspect-ratio: 1/1;
+    border-radius: 35%;
+    border: clamp(2px, 0.5vw, 6px) solid transparent;
+    background: vars.$color-light-tan;
+    overflow: hidden;
+    min-width: 0;
+    cursor: pointer;
+
+    &.active {
+        background: vars.$color-primary;
+    }
+
     img {
         width: 100%;
         height: 100%;
@@ -565,21 +629,8 @@ input[type=range]::-webkit-slider-runnable-track {
     }
 }
 
-.nose-style,
-.mouth-style {
-    svg {
-        width: 60%;
-        height: 60%;
-        object-fit: cover;
-        object-position: center;
+/* ----- Button Animations ----- */
 
-        &:hover, &.active {
-            transform: scale(1.2);
-        }
-    }
-}
-
-/* Button animations */
 #open-settings, 
 #reset-view,
 .theme-btn,
@@ -593,316 +644,27 @@ input[type=range]::-webkit-slider-runnable-track {
 .bottom-style, 
 .hair-color, 
 .nose-color {
-    transition: transform 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
     &:active {
-        animation: buttonClick 0.5s ease;
+        animation: buttonClick 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 }
 
-/* Responsive design*/
-@media (min-width: 320px) and (orientation: landscape) {
-    .container {
+/* ----- General Styling ----- */
+
+svg, img {
+    display: block;
+    max-width: 100%;
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+@media (orientation: landscape) {
+    #main-content {
         grid-template-columns: 40% 60%;
         grid-template-rows: 100%;
-    }
-
-    #customization-panel {
-        padding: 20px 30px;
-    }
-
-    dialog[open] {
-        padding-top: 30px;
-    }
-
-    .modal-title {
-        padding: 5px 30px;
-        h1 {
-            font-size: 18px;
-        }
-    }
-
-    .modal-content {
-        h2 {
-            font-size: 14px;
-        }
-    }
-
-    .options-panel {
-        padding-bottom: 1vw;
-    }
-
-    .category-btn {
-        width: clamp(60px, 10vmin, 115px);
-        height: clamp(60px, 10vmin, 115px);
-    }
-
-    .hair-options,
-    .face-options {
-        padding-top: 2vw;
-    }
-
-    .hair-colors,
-    .nose-colors {
-        gap: 4px;
-    }
-
-    .hair-style {
-        width: clamp(100px, 18vmin, 160px);
-        height: clamp(100px, 18vmin, 160px);
-    }
-
-    .nose-style {
-        width: clamp(70px, 20vmin, 200px);
-        height: clamp(50px, 17vmin, 150px);
-    }
-
-    .hair-color,
-    .nose-color {
-        width: clamp(30px, 10vmin, 60px);
-        height: clamp(30px, 10vmin, 60px);
-    }
-}
-
-@media (max-width: 480px) {
-    #sound-options {
-        gap: 20px;
-
-        h2 {
-        white-space: normal;
-        animation: none;
-        }
-    }
-
-    .sound-button {
-        padding: 15px 30px;
-    }
-}
-
-@media (min-width: 768px) and (orientation: portrait) {
-    .container {
-        grid-template-rows: 40% 60%;
-    }
-
-    #customization-panel {
-        padding: 20px 40px;
-    }
-
-    .sfx,
-    .music {
-        width: 70%;
-    }
-
-    .theme-btn {
-        width: 50px;
-        height: 50px;
-    }
-
-    #close-settings {
-        top: -1.5rem;
-        left: -1.5rem;
-        width: 60px;
-        height: 60px;
-
-        svg {
-            width: 30px;
-            height: 30px;
-        }
-    }
-
-    .category-btn {
-        width: clamp(60px, 9vmin, 85px);
-        height: clamp(60px, 9vmin, 85px);
-    }
-
-    .skin-option,
-    .eye-option {
-        width: clamp(80px, 15vmin, 200px);
-        height: clamp(80px, 15vmin, 200px);
-        border-width: 8px;
-    }
-
-    .hair-options {
-        padding-top: 3vw;
-    }
-
-    .hair-style {
-        width: clamp(120px, 20vmin, 180px);
-        height: clamp(120px, 20vmin, 180px);
-    }
-
-    .nose-style,
-    .mouth-style {
-        width: clamp(100px, 17vmin, 200px);
-        height: clamp(80px, 14vmin, 170px);
-        border-width: 6px;
-    }
-
-    .hair-color,
-    .nose-color {
-        width: clamp(50px, 8vmin, 80px);
-        height: clamp(50px, 8vmin, 80px);
-        border-width: 5px;
-    }
-}
-
-@media (min-width: 768px) and (orientation: landscape) {
-    .container {
-        grid-template-columns: 40% 60%;
-        grid-template-rows: 100%;
-    }
-
-    #customization-panel {
-        padding: 20px 30px;
-    }
-
-    .modal-title {
-        padding: 5px 30px;
-        h1 {
-            font-size: 16px;
-        }
-    }
-
-    .modal-content {
-        h2 {
-            font-size: 12px;
-        }
-    }
-
-    .sfx,
-    .music {
-        width: 60%;
-    }
-
-    #close-settings {
-        top: -1.5rem;
-        left: -1.5rem;
-        width: 60px;
-        height: 60px;
-        
-        svg {
-            width: 30px;
-            height: 30px;
-        }
-    }
-
-    .options-panel {
-        padding-bottom: 3vw;
-    }
-
-    .category-btn {
-        width: clamp(60px, 10vmin, 115px);
-        height: clamp(60px, 10vmin, 115px);
-    }
-
-    .hair-options,
-    .face-options {
-        padding-top: 2vw;
-    }
-
-    .hair-colors,
-    .nose-colors {
-        gap: 4px;
-    }
-
-    .hair-style {
-        width: clamp(100px, 18vmin, 160px);
-        height: clamp(100px, 18vmin, 160px);
-    }
-
-    .nose-style,
-    .mouth-style {
-        width: clamp(80px, 20vmin, 200px);
-        height: clamp(60px, 17vmin, 170px);
-        border-width: 4px;
-    }
-
-    .hair-color,
-    .nose-color {
-        width: clamp(30px, 10vmin, 80px);
-        height: clamp(30px, 10vmin, 80px);
-        border-width: 3px;
-    }
-}
-
-@media (min-width: 1024px) {
-    #customization-panel {
-        padding: 20px 50px;
-    }
-    
-    dialog[open] {
-        width: 50%;
-        height: 60%;
-    }
-
-    .modal-title {
-        padding: 5px 60px;
-        h1 {
-            font-size: 36px;
-        }
-    }
-
-    .modal-content {
-        h2 {
-            font-size: 24px;
-        }
-    }
-
-    .theme-btn {
-        width: 60px;
-        height: 60px;
-    }
-
-    .sfx,
-    .music {
-        width: 40%;
-    }
-
-    .options-panel {
-        padding-bottom: 5vw;
-    }
-
-    .skin-option,
-    .eye-option {
-        width: clamp(80px, 15vmin, 200px);
-        height: clamp(80px, 15vmin, 200px);
-        border-width: 8px;
-    }
-
-    .hair-style {
-        width: clamp(120px, 18vmin, 275px);
-        height: clamp(120px, 18vmin, 275px);
-        border: 7px solid transparent;
-    }
-
-    .nose-style,
-    .mouth-style {
-        width: clamp(100px, 17vmin, 170px);
-        height: clamp(80px, 15vmin, 150px);
-        border-width: 7px;
-    }
-
-    .hair-colors,
-    .nose-colors {
-        gap: 10px;
-    }
-
-    .hair-color,
-    .nose-color {
-        width: clamp(70px, 8vmin, 125px);
-        height: clamp(70px, 8vmin, 125px);
-        border-width: 5px;
-    }
-
-    .top-options,
-    .bottom-options {
-        padding-bottom: 5vw;
-    }
-
-    .top-style,
-    .bottom-style {
-        width: clamp(80px, 20vmin, 200px);
-        height: clamp(80px, 20vmin, 200px);
-        border-width: 8px;
     }
 }

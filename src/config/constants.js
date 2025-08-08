@@ -160,7 +160,7 @@ export const SCENE_SETTINGS = {
   CAMERA: {
     position: { x: 0, y: 1, z: 5 },
     lookUpPosition: { x: 4, y: 3.5, z: 2.5  },
-    target: { x: 0, y: 0.75, z: 0 },
+    target: { x: 0, y: 0.9, z: 0 },
     fov: 45,
     near: 0.1,
     far: 1000

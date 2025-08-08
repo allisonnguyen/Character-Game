@@ -192,7 +192,8 @@ export class SceneManager {
         this.backgroundMusic = new Howl({
             src: ['/audio/music/Fishing Log.mp3'],
             loop: true,
-            volume: 0
+            volume: 0,
+            html5: true,
         });
         
         this.audioInitialized = true;

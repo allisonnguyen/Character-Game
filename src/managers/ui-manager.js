@@ -1,5 +1,6 @@
 // managers/ui-manager.js
 import * as THREE from 'three';
+import { gsap } from 'gsap';
 import { Howl } from 'howler';
 import { normalizeColor } from '../utils/colorUtils';
 import { SWATCH_ICON_PATH, THEMES, COLORS, MODEL_PARTS, MODEL_CLOTHING, FULL_BODY, HAIR_STYLES, NOSE_STYLES, MOUTH_STYLES, TOP_STYLES, BOTTOM_STYLES } from '../config/constants';
@@ -31,35 +32,43 @@ export class UIManager {
             this.sfx = {
                 zoomIn: new Howl ({
                     src: ['/audio/sfx/System_Camera_Move_Zoom_In.wav'],
-                    volume: 0
+                    volume: 0,
+                    html5: true,
                 }),
                 zoomOut: new Howl ({
                     src: ['/audio/sfx/System_Camera_Move_Zoom_Out.wav'],
-                    volume: 0
+                    volume: 0,
+                    html5: true,
                 }),
                 dragStart: new Howl ({
                     src: ['/audio/sfx/UI_DragStart.wav'],
-                    volume: 0
+                    volume: 0,
+                    html5: true,
                 }),
                 dragEnd: new Howl ({
                     src: ['/audio/sfx/UI_DragEnd.wav'],
-                    volume: 0
+                    volume: 0,
+                    html5: true,
                 }),
                 click: new Howl ({
                     src: ['/audio/sfx/UI_Interior_MultiSelect_On.wav'],
-                    volume: 0
+                    volume: 0,
+                    html5: true,
                 }),
                 category: new Howl ({
                     src: ['/audio/sfx/UI_Interior_ChangeMode.wav'],
-                    volume: 0
+                    volume: 0,
+                    html5: true,
                 }),
                 open: new Howl ({
                     src: ['/audio/sfx/UI_RingMenu_Open.wav'],
-                    volume: 0
+                    volume: 0,
+                    html5: true,
                 }),
                 close: new Howl ({
                     src: ['/audio/sfx/UI_RingMenu_Close.wav'],
-                    volume: 0
+                    volume: 0,
+                    html5: true,
                 }),
             }
             this.audioInitialized = true;
@@ -77,6 +86,7 @@ export class UIManager {
         const sfxVolume = parseFloat(localStorage.getItem('sfxVolume') || 0);
         
         if (isSoundEnabled && sfxVolume > 0 && this.sfx[soundName]) {
+            this.sfx[soundName].stop();
             this.sfx[soundName].volume(sfxVolume / 100);
             this.sfx[soundName].play();
         }
@@ -385,17 +395,67 @@ export class UIManager {
         });
 
         /* Settings Modal */
-        const dialog = document.getElementById('settings');
+        const dialog = document.getElementById('modal');
         const showDialog = document.getElementById('open-settings');
         const closeDialog = document.getElementById('close-settings');
 
         showDialog.addEventListener('click', () => {
             this.playSound('open');
             dialog.showModal();
+            gsap.set(modal, {
+                opacity: 0,
+                scale: 0,
+                transform: 'translate(-50%, -50%)'
+            });
+            gsap.to(modal, {
+                opacity: 1,
+                scale: 1,
+                duration: 0.5,
+                ease: "back.out(2)",
+                transform: 'translate(-50%, -50%)'
+            });
         });
-        closeDialog.addEventListener('click', () => {
-            this.playSound('close');
-            dialog.close();
-        })
+
+        closeDialog.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.handleModalExit(e, dialog);
+        }, { passive: false });
+    }
+
+    handleModalExit(e, modal) {
+        const button = document.getElementById('close-settings');
+        
+        if (!button) return;
+        
+        this.playSound('close');
+        
+        // GSAP animation for the button
+        gsap.to(button, {
+            scale: 1.5,
+            duration: 0.2,
+            ease: "power2.out",
+            yoyo: true,
+            repeat: 1,
+            onComplete: () => {
+                gsap.set(button, { clearProps: "all" });
+            }
+        });
+        
+        // Animation for modal and overlay
+        gsap.to(modal, {
+            opacity: 0,
+            scale: 0.9,
+            duration: 0.3,
+            ease: "back.in(1.7)",
+            transform: 'translate(-50%, -50%)',
+            onComplete: () => {
+                modal.close();
+                gsap.set(modal, {
+                    opacity: 1,
+                    scale: 1,
+                    transform: 'translate(-50%, -50%)'
+                });
+            }
+        });
     }
 }
