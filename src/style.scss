@@ -410,8 +410,8 @@ body {
     width: 100%;
     height: 100%;
     min-height: 0;
-    @include vars.centered;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: 80% 20%;
     overflow: hidden;
 
     @media (max-height: 480px) {
@@ -466,13 +466,9 @@ body {
     width: 100%;
     min-height: 0;
     display: grid;
-    grid-template-rows: 30% 70%;
+    grid-template-rows: 35% 65%;
     grid-template-columns: 100%;
     padding: 3vw;
-
-    @media (max-height: 480px) {
-        align-items: flex-end;
-    }
 }
 
 .hair-styles, .nose-styles, .mouth-styles {
@@ -524,11 +520,10 @@ body {
     @include vars.centered;
     flex-wrap: wrap;
     gap: clamp(0.5rem, 1vw, 1.5rem);
-    padding: 1vw;
 }
 
 .hair-color {
-    flex: 0 0 clamp(40px, 11.5vmin, 125px);
+    flex: 0 0 clamp(40px, 10vmin, 125px);
     aspect-ratio: 1/1;
 }
 
@@ -635,7 +630,8 @@ body {
 .hair-color,
 .nose-color,
 .top-style,
-.bottom-style {
+.bottom-style, 
+.confirm-button {
     transform: scale(1);
 
     &:not(:active) {
@@ -659,6 +655,31 @@ body {
     &:active {
         transform: scale(0.9);
         transition: none;
+    }
+}
+
+.confirm-panel {
+    @include vars.centered;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding-bottom: 3vw;
+}
+
+.confirm-button {
+    border: transparent;
+    border-radius: 30px;
+    background: vars.$color-dark-tan;
+    padding: 10px 25px;
+    cursor: pointer;
+    font-family: 'FOT Seurat Pro';
+    font-size: 16px;
+    color: vars.$color-secondary;
+    transform-origin: center;
+    will-change: transform;
+
+    &:hover {
+        background: vars.$color-accent;
     }
 }
 
