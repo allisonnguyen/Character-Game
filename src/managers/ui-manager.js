@@ -70,6 +70,11 @@ export class UIManager {
                     volume: 0,
                     html5: true,
                 }),
+                confirm: new Howl ({
+                    src: ['/audio/sfx/UI_Decide.wav'],
+                    volume: 0,
+                    html5: true,
+                }),
             }
             this.audioInitialized = true;
         } catch (error) {
@@ -421,6 +426,18 @@ export class UIManager {
             e.preventDefault();
             this.handleModalExit(e, dialog);
         }, { passive: false });
+
+        document.getElementById('confirm-button').addEventListener('click', () => {
+            this.playSound('confirm');
+
+            document.getElementById('customization-panel').style.display = 'none';
+            
+            const mainContent = document.getElementById('main-content');
+            mainContent.style.gridTemplateRows = '100%';
+            mainContent.style.gridTemplateColumns = '100%';
+
+            window.dispatchEvent(new Event('resize'));
+        });
     }
 
     handleModalExit(e, modal) {

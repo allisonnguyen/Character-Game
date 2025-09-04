@@ -80,6 +80,10 @@ export class SceneManager {
         this.stopLoadingAnimation();
         this.render();
         this.showSoundOptions();
+
+        // Add confirm button here to prevent flash of unstyled content
+        const confirmBtn = document.getElementById('confirm-button');
+        confirmBtn.style.display = 'flex';
     }
 
     showSoundOptions() {

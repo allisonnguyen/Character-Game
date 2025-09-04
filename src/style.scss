@@ -300,9 +300,12 @@ body {
 }
 
 #experience-canvas {
+    width: 100%;
+    height: 100%;
     position: absolute;
     top: 0;
     left: 0;
+    display: block;
 }
 
 /* ----- Control Buttons ----- */
@@ -631,7 +634,7 @@ body {
 .nose-color,
 .top-style,
 .bottom-style, 
-.confirm-button {
+#confirm-button {
     transform: scale(1);
 
     &:not(:active) {
@@ -666,11 +669,11 @@ body {
     padding-bottom: 3vw;
 }
 
-.confirm-button {
+#confirm-button {
     border: transparent;
     border-radius: 30px;
     background: vars.$color-dark-tan;
-    padding: 10px 25px;
+    padding: 15px 30px;
     cursor: pointer;
     font-family: 'FOT Seurat Pro';
     font-size: 16px;
