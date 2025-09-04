@@ -68,10 +68,3 @@ $color-light-tan: var(--color-light-tan);
     opacity: 0;
   }
 }
-
-@keyframes buttonClick {
-  0% { transform: scale(var(--current-scale, 1)); }
-  30% { transform: scale(calc(var(--current-scale, 1) * 0.92)); }
-  70% { transform: scale(calc(var(--current-scale, 1) * 0.96)); }
-  100% { transform: scale(var(--current-scale, 1)); }
-}

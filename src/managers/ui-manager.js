@@ -123,6 +123,7 @@ export class UIManager {
         document.documentElement.style.setProperty('--color-light-tan', theme.lightBackground);
         
         this.sceneManager.scene.background = new THREE.Color(normalizeColor(theme.background));
+        this.sceneManager.updateFloorColor(normalizeColor(theme.primary));
         
         localStorage.setItem('selectedTheme', JSON.stringify(theme));
     }

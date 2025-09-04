@@ -23,30 +23,30 @@ export const THEMES = {
   },
   PINK: {
     name: 'Pink',
-    primary: '#febdc3',
-    primaryDark: '#ef758a',
-    secondary: '#73654b',
-    accent: '#32624c',
-    background: '#88c9a1',
-    lightBackground: '#e5ffe4'
+    primary: '#FF4A7A',
+    primaryDark: '#A3002C',
+    secondary: '#F3FFBD',
+    accent: '#15465B',
+    background: '#70C1B3',
+    lightBackground: '#A9DAD2'
   },
   GREEN: {
     name: 'Green',
-    primary: '#88C9A1',
-    primaryDark: '#32624C',
-    secondary: '#73654B',
-    accent: '#EF758A',
-    background: '#FEBDC3',
-    lightBackground: '#FFEBED'
+    primary: '#FFC847',
+    primaryDark: '#FFB300',
+    secondary: '#fdfaf0',
+    accent: '#10400d',
+    background: '#B5D86F',
+    lightBackground: '#dbecb9'
   },
-  BLUE: {
-    name: 'Blue',
-    primary: '#6AB7CA',
-    primaryDark: '#15353C',
-    secondary: '#73654B',
-    accent: '#8F1300',
-    background: '#E4A79E',
-    lightBackground: '#FFE8DC'
+  BLACK: {
+    name: 'Black',
+    primary: '#3F4D50',
+    primaryDark: '#000A14',
+    secondary: '#000A14',
+    accent: '#0077ff',
+    background: '#e8eced',
+    lightBackground: '#fcfafa'
   }
 };
 
@@ -182,13 +182,11 @@ export const SCENE_SETTINGS = {
   },
   FLOOR: {
     geometry: {
-        width: 5000,
-        height: 5000,
-        widthSegments: 1,
-        heightSegments: 1
+        radius: 1.5,
+        segments: 64,
     },
     material: {
-        color: normalizeColor(COLORS.BACKGROUND),
+        color: normalizeColor(THEMES.DEFAULT.primary),
         shininess: 0
     }
   }

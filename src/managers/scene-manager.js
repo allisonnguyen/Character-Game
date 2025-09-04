@@ -5,22 +5,20 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { Howl } from 'howler';
 import { normalizeColor } from '../utils/colorUtils';
-import { SCENE_SETTINGS, COLORS, MODEL_PARTS, HAIR_STYLES } from '../config/constants';
+import { SCENE_SETTINGS, COLORS, MODEL_PARTS, HAIR_STYLES, THEMES } from '../config/constants';
 
 export class SceneManager {
     constructor() {
+        this.bones = new Map();
         this.models = new Map();
         this.textures = new Map();
         this.scene = new THREE.Scene();
 
+        this.floorMaterial = null;
+
         this.animationsMap = new Map();
         this.gltfAnimations = new THREE.AnimationClip;
         this.clock = new THREE.Clock();
-
-        /*
-        this.mouse = new THREE.Vector2();
-        this.setupMouseTracking();
-        */
 
         this.loadingAnimation = {
             element: null
@@ -276,14 +274,18 @@ export class SceneManager {
                 
                 // Process materials for all meshes
                 gltf.scene.traverse((child) => {
-                if (child.isMesh) {
-                    child.material = new THREE.MeshStandardMaterial({ 
-                    color: normalizeColor(COLORS.BASE),
-                    side: child.name.toLowerCase() in HAIR_STYLES ? THREE.DoubleSide : THREE.FrontSide,
-                    });
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
+                    if (child.isBone) {
+                        this.bones.set(child.name, child);
+                    }
+                    
+                    if (child.isMesh) {
+                        child.material = new THREE.MeshStandardMaterial({ 
+                        color: normalizeColor(COLORS.BASE),
+                        side: child.name.toLowerCase() in HAIR_STYLES ? THREE.DoubleSide : THREE.FrontSide,
+                        });
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                    }
                 });
 
                 this.models.set(modelName, modelGroup);
@@ -372,21 +374,25 @@ export class SceneManager {
         */
 
         // Setup Floor
-        var floorGeometry = new THREE.PlaneGeometry(
-            SCENE_SETTINGS.FLOOR.geometry.width,
-            SCENE_SETTINGS.FLOOR.geometry.height,
-            SCENE_SETTINGS.FLOOR.geometry.widthSegments,
-            SCENE_SETTINGS.FLOOR.geometry.heightSegments
+        var floorGeometry = new THREE.CircleGeometry(
+            SCENE_SETTINGS.FLOOR.geometry.radius,
+            SCENE_SETTINGS.FLOOR.geometry.segments
         );
-        var floorMaterial = new THREE.MeshPhongMaterial({
-            color: SCENE_SETTINGS.FLOOR.material.color,
+
+        const savedTheme = localStorage.getItem('selectedTheme');
+        const themeColor = savedTheme ? JSON.parse(savedTheme).primary : THEMES.DEFAULT.primary;
+
+        this.floorMaterial = new THREE.MeshPhongMaterial({
+            //side: THREE.DoubleSide,
+            color: themeColor,
             shininess: SCENE_SETTINGS.FLOOR.material.shininess
         });
-        var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+
+        var floor = new THREE.Mesh(floorGeometry, this.floorMaterial);
         floor.rotation.x = -0.5 * Math.PI;
         floor.receiveShadow = true;
-        floor.position.y = 0;
-        // this.scene.add(floor);
+        floor.position.y = -0.01;
+        this.scene.add(floor);
 
         // Setup Renderer
         this.renderer = new THREE.WebGLRenderer({
@@ -422,6 +428,11 @@ export class SceneManager {
         });
     }
 
+    updateFloorColor(color) {
+        if (this.floorMaterial) {
+            this.floorMaterial.color = new THREE.Color(color);
+        }
+    }
 
     addModelToScene(modelName) {
         const model = this.models.get(modelName);
@@ -521,31 +532,6 @@ export class SceneManager {
         return mouthMesh;
     }
 
-    /*
-    setupMouseTracking() {
-        window.addEventListener('mousemove', (e) => {
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
-
-            const anchor = document.getElementById('experience-container');
-            const rect = anchor.getBoundingClientRect();
-            const anchorX = rect.left + rect.width / 2;
-            const anchorY = rect.right + rect.height / 2;
-
-            const angleDeg = this.angle(mouseX, mouseY, anchorX, anchorY);
-            console.log(angleDeg);
-        })
-    }
-
-    angle(cx, cy, ex, ey) {
-        const dy = ey - cy;
-        const dx = ex - cx;
-        const rad = Math.atan2(dy, dx);
-        const deg = rad * 180 / Math.PI;
-        return deg;
-    }
-    */
-
     /**  ---------------------------------- Camera ---------------------------------- */
 
     moveCamera(actionName) {
@@ -598,9 +584,12 @@ export class SceneManager {
         this.controls.update();
     }
 
-    playAnimation(targetParts, actionName) {
+    async playAnimation(targetParts, actionName) {
         this.moveCamera(actionName);
-
+        
+        // Prepare all animations first
+        const actions = [];
+        
         targetParts.forEach(part => {
             const animationData = this.animationsMap.get(part);
             if (animationData) {
@@ -617,10 +606,19 @@ export class SceneManager {
                     action.setLoop(THREE.LoopOnce);
                     action.clampWhenFinished = true;
                     action.setEffectiveWeight(1.0);
-
-                    action.reset().play();
+                    action.reset();
+                    
+                    actions.push(action);
                 }
             }
+        });
+        
+        // Wait for next frame to ensure all animations are prepared
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        
+        // Start all animations simultaneously
+        actions.forEach(action => {
+            action.play();
         });
     }
 
